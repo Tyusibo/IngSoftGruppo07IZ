@@ -20,9 +20,9 @@ Di seguito sono riportati dei link che rimandano allo stesso materiale, presenta
 
 ## SECOND SPRINT
 
-### [Second Sprint Plannig]()
+### [Second Sprint Plannig](https://docs.google.com/document/d/1l5Gn6LvdjpUq3dH2d2W-d0xphUa8khKRxusalBZE5kQ/edit?usp=sharing)
 
-### [Second Sprint Report]()
+### [Second Sprint Report](https://docs.google.com/document/d/10u8M5W7dnFDxwwY9mRRN4TGNJiaGgYH-u_xyAMg3gdY/edit?usp=sharing)
 
 ### [Presentazione_Power_Point](https://docs.google.com/presentation/d/1iaX7LsA-tDRFe7NSMd-4xazoCv7F0o2BFVWP6_EOLpw/edit?usp=sharing)
 
