@@ -14,13 +14,23 @@ Di seguito sono riportati dei link che rimandano allo stesso materiale, presenta
 
 ### [Report](https://docs.google.com/document/d/1jJE9Fkpg6o8A_PP8S-I_-tJ0Bza4O5VWjTNYGDgwW5Y/edit?usp=sharing)
 
-### [Class_Diagram](https://drive.google.com/file/d/1FMH5MT17I66ZMrn9jYeB74NZ4OpPttQU/view?usp=sharing )
+### [Class_Diagram_First_Sprint](https://drive.google.com/file/d/1FMH5MT17I66ZMrn9jYeB74NZ4OpPttQU/view?usp=sharing )
+
+### [Presentazione_Power_Point](https://docs.google.com/presentation/d/1gJ62nf73e-cxNfoVYIvTTtq1t6gPNg7BfQKfRRIST0k/edit?usp=sharing)
 
 ## SECOND SPRINT
 
-### [Second Sprint Planinng]()
+### [Second Sprint Plannig]()
 
 ### [Second Sprint Report]()
 
+### [Presentazione_Power_Point]()
+
 ## THIRD SPRINT
+
+### [Third Sprint Plannig]()
+
+### [Third Sprint Report]()
+
+### [Presentazione_Power_Point]()
 
