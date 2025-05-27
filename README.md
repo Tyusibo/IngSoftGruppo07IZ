@@ -1,5 +1,7 @@
 # IngSoftGruppo07IZ
 ###  [Trello Board](https://trello.com/invite/b/67cdb0defecf6823402b8203/ATTI47d9ee31c6fd4e6fe0cca3ea3f6e083d41EC1356/ingsoftware) 
+Nella root della Repository è presente la cartella "Documentazione" dove è inserito il materiale da consegnare in ogni fase del progetto.
+Di seguito sono riportati dei link che rimandano allo stesso materiale, presentato in modo più accessibile.
 
 ## PRE-GAMING
 ###  [Documento Pre-Gaming](https://docs.google.com/document/d/1QE9YszeibzB3b4AYQbOyFLfh0w1KY5aMFM5_X5htci0/edit?usp=sharing)
