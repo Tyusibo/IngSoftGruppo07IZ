@@ -24,7 +24,7 @@ Di seguito sono riportati dei link che rimandano allo stesso materiale, presenta
 
 ### [Second Sprint Report]()
 
-### [Presentazione_Power_Point]()
+### [Presentazione_Power_Point](https://docs.google.com/presentation/d/1iaX7LsA-tDRFe7NSMd-4xazoCv7F0o2BFVWP6_EOLpw/edit?usp=sharing)
 
 ## THIRD SPRINT
 
