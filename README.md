@@ -6,7 +6,7 @@ Di seguito sono riportati dei link che rimandano allo stesso materiale, presenta
 ## PRE-GAMING
 ###  [Documento Pre-Gaming](https://docs.google.com/document/d/1QE9YszeibzB3b4AYQbOyFLfh0w1KY5aMFM5_X5htci0/edit?usp=sharing)
 
-###  [Documento Backlog](https://docs.google.com/document/d/1fxR3olTz1N2TVSuh-OLeVsfWoxgXUZpoeKmwf3IaHVA/edit?usp=sharing)
+###  [First Sprint Planning](https://docs.google.com/document/d/1fxR3olTz1N2TVSuh-OLeVsfWoxgXUZpoeKmwf3IaHVA/edit?usp=sharing)
 
 ### [Presentazione_Power_Point](https://docs.google.com/presentation/d/1LYSJy-kOEAxT24G1dvqjUAobic3vSY9NXXrqVDhS_sE/edit?usp=sharing)
 
@@ -17,6 +17,10 @@ Di seguito sono riportati dei link che rimandano allo stesso materiale, presenta
 ### [Class_Diagram](https://drive.google.com/file/d/1FMH5MT17I66ZMrn9jYeB74NZ4OpPttQU/view?usp=sharing )
 
 ## SECOND SPRINT
+
+### [Second Sprint Planinng]()
+
+### [Second Sprint Report]()
 
 ## THIRD SPRINT
 
