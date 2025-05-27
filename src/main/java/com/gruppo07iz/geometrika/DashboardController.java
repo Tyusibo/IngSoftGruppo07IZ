@@ -648,8 +648,8 @@ public class DashboardController implements Initializable {
         this.copiaForma.setDisable(abilita);
         this.tagliaForma.setDisable(abilita);
         this.eliminaForma.setDisable(abilita);
-        this.specchioOrizzontale.setDisable(abilita);
-        this.specchioVerticale.setDisable(abilita);
+        //this.specchioOrizzontale.setDisable(abilita);
+        //this.specchioVerticale.setDisable(abilita);
     }
 
 
