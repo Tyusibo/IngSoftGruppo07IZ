@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gruppo07iz.geometrika.DashboardController">
+
+    <!-- Barra superiore con Menu e strumenti -->
+    <top>
+        <VBox spacing="5.0" style="-fx-padding: 10;">
+            <children>
+      
+                <HBox prefHeight="152.0" prefWidth="2959.0" spacing="20.0" style="-fx-background-color: #f5f6f7; -fx-border-color: #cccccc; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                    <children>
+                        <VBox fx:id="toolbar" alignment="TOP_CENTER" prefHeight="154.0" prefWidth="100.0" spacing="15.0">
+                            <children>
+                                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fx:id="apriFoglio" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestoreApriFoglio" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/icone/apri.png" />
+                                            </image>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                        <ImageView fx:id="salvaFoglio" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestoreSalvaFoglio" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/icone/salva.png" />
+                                            </image>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                    </children>
+                                </VBox>
+                                <Label text="File">
+                                    <font>
+                                        <Font name="SansSerif Regular" size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="86.0" prefWidth="0.0" />
+                        <!-- Bottoni Toggle -->
+                        <VBox alignment="TOP_CENTER" spacing="10.0">
+                            <children>
+                                <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="400.0" spacing="30.0">
+                                    <children>
+                                        <ImageView fx:id="poligonoBottone" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestorePoligonoBottone" pickOnBounds="true" preserveRatio="true" visible="false">
+                                            <image>
+                                                <Image url="@risorse/forme/poligono.png" />
+                                            </image>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                        <ImageView fx:id="rettangoloBottone" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestoreRettangoloBottone" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/forme/rettangolo.png" />
+                                            </image>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                        <ImageView fx:id="ellisseBottone" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestoreEllisseBottone" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/forme/ellisse.png" />
+                                            </image>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                        <ImageView fx:id="lineaBottone" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestoreLineaBottone" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/forme/linea.png" />
+                                            </image>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                        <ImageView fx:id="testoBottone" fitHeight="48.0" fitWidth="48.0" onMouseClicked="#gestoreTestoBottone" pickOnBounds="true" preserveRatio="true" visible="false">
+                                            <image>
+                                                <Image url="@risorse/forme/testo.png" />
+                                            </image>
+                                            <cursor>
+                                            </cursor>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="100.0" prefWidth="200.0" visible="false">
+                                    <children>
+                                        <VBox prefHeight="200.0" prefWidth="220.0" spacing="5.0">
+                                            <children>
+                                                <Label style="-fx-font-weight: bold;" text="Inserisci Testo" />
+                                                <TextField fx:id="textFieldTesto" prefHeight="25.0" prefWidth="151.0" />
+                                            </children>
+                                            <HBox.margin>
+                                                <Insets right="20.0" />
+                                            </HBox.margin>
+                                        </VBox>
+                                        <VBox prefHeight="56.0" prefWidth="145.0">
+                                            <children>
+                                                <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                                    <children>
+                                                        <Button fx:id="rimpicciolisciBottone" mnemonicParsing="false" onAction="#gestoreRimpicciolisciBottone" text="-">
+                                                            <padding>
+                                                                <Insets bottom="5.0" left="10.0" right="10.0" top="4.0" />
+                                                            </padding>
+                                                        </Button>
+                                                        <TextField fx:id="textFieldDimensioneTesto" maxWidth="70.0" />
+                                                        <Button fx:id="aumentaBottone" mnemonicParsing="false" onAction="#gestoreAumentaBottone" text="+" />
+                                                    </children>
+                                                    <VBox.margin>
+                                                        <Insets top="21.0" />
+                                                    </VBox.margin>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                                <Label text="Forme">
+                                    <font>
+                                        <Font name="SansSerif Regular" size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="96.0" prefWidth="3.0" />
+      
+                        <!-- Selettori Colore -->
+                        <VBox alignment="TOP_CENTER" spacing="15.0">
+                            <children>
+                                <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/icone/bordi.png" />
+                                            </image>
+                                        </ImageView>
+                                        <ColorPicker fx:id="coloreBordoCreazione" onAction="#gestoreCambiaBordo">
+                                            <value>
+                                                <Color />
+                                            </value>
+                                        </ColorPicker>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/icone/riempimento.png" />
+                                            </image>
+                                        </ImageView>
+                                        <ColorPicker fx:id="coloreRiempimentoCreazione" onAction="#gestoreCambiaRiempimento">
+                                            <value>
+                                                <Color />
+                                            </value>
+                                        </ColorPicker>
+                                    </children>
+                                </HBox>
+                                <Label text="Stile">
+                                    <font>
+                                        <Font name="SansSerif Regular" size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <VBox alignment="TOP_CENTER" prefHeight="144.0" prefWidth="235.0">
+                            <children>
+                                <HBox prefHeight="54.0" prefWidth="235.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/icone/griglia.png" />
+                                            </image>
+                                        </ImageView>
+                                        <VBox alignment="CENTER" maxHeight="32.0" prefHeight="32.0" prefWidth="195.0">
+                                            <children>
+                                                <HBox prefHeight="16.0" prefWidth="166.0" spacing="10.0">
+                                                    <children>
+                                                        <RadioButton fx:id="attivaGriglia" mnemonicParsing="false" onAction="#gestoreAttivaGriglia" />
+                                                        <Slider fx:id="intensitaDimensioneGriglia" max="5.0" minWidth="150.0" onDragDetected="#gestoreIntensitaGriglia" prefHeight="25.0" prefWidth="150.0" snapToTicks="true">
+                                                            <HBox.margin>
+                                                                <Insets top="1.0" />
+                                                            </HBox.margin>
+                                                        </Slider>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="54.0" prefWidth="235.0" spacing="36.0" visible="false">
+                                    <children>
+                                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@risorse/icone/zoom.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Slider fx:id="zoomLavagna" blockIncrement="25.0" max="200.0" minWidth="150.0" onDragDetected="#gestoreZoomLavagna" value="100.0">
+                                            <HBox.margin>
+                                                <Insets top="1.0" />
+                                            </HBox.margin>
+                                        </Slider>
+                                    </children>
+                                </HBox>
+                        <Label text="Layout">
+                           <font>
+                              <Font name="SansSerif Regular" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </Label>
+                            </children>
+                        </VBox>
+                  <Separator orientation="VERTICAL" prefHeight="200.0" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <ImageView fx:id="bottoneUndo" fitHeight="59.0" fitWidth="42.0" onMouseClicked="#annullaUltimoComando" pickOnBounds="true" preserveRatio="true">
+                                 <cursor>
+                                 </cursor>
+                                 <image>
+                                    <Image url="@risorse/icone/bottoneUndo.png" />
+                                 </image>
+                              </ImageView>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Annulla" textAlignment="CENTER" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets top="10.0" />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets top="5.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <ImageView fx:id="bottoneSeleziona" fitHeight="32.0" fitWidth="32.0" onMouseClicked="#gestoreBottoneSeleziona" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@risorse/icone/seleziona.png" />
+                                 </image>
+                              </ImageView>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Seleziona" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <ComboBox fx:id="nomiFormePersonalizzate" prefWidth="150.0" visible="false" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <!-- Centro: StackPane con ScrollPane + pannelloModifica -->
+    <center>
+        <AnchorPane>
+            <children>
+            <ScrollPane fx:id="scrollPane" prefHeight="483.0" prefWidth="2981.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="0.0">
+              <content>
+                <AnchorPane fx:id="anchorPaneSP" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: lightgray;">
+                     <children>
+                        <Pane fx:id="contenitoreGrigliaLavagna" style="-fx-background-color: white;">
+                           <children>
+                              <GridPane fx:id="griglia">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                              </GridPane>
+                              <Pane fx:id="lavagna" minHeight="1000.0" minWidth="2000.0" onContextMenuRequested="#clickDestro" onMouseDragged="#trascinamento" onMouseMoved="#movimentoMouse" onMousePressed="#clickSinistro" onMouseReleased="#mouseRilasciato" prefHeight="1000.0" prefWidth="2000.0" style="-fx-background-color: transparent;" />    
+                           </children>
+                        </Pane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
+
+
+                <VBox fx:id="pannelloModifica" spacing="8" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.3, 2, 2); -fx-font-family: 'SansSerif'; -fx-font-size: 13px;" visible="false">
+
+
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Modifica Forma" />
+
+                    <Label text="Colore Bordo" />
+                    <ColorPicker fx:id="modificaColoreBordo" onAction="#modificaColoreBordoEseguita" />
+
+                    <Label fx:id="etichettaColoreRiempimento" text="Colore Riempimento" />
+                    <ColorPicker fx:id="modificaColoreRiempimento" onAction="#modificaRiempimentoEseguita" />
+
+                    <Label fx:id="etichettaDimensione1" text="Dimensione 1" />
+                    <TextField fx:id="textFieldDimensione1" onAction="#gestoreModificheDimensioni" />
+
+                    <Label fx:id="etichettaDimensione2" text="Dimensione 2" />
+                    <TextField fx:id="textFieldDimensione2" onAction="#gestoreModificheDimensioni" visible="true" />
+
+                    <Label text="Angolo Rotazione" visible="false"/>
+                    <TextField fx:id="textFieldAngoloRotazione" onAction="#gestoreModificheAngolo" visible="false" />
+
+                    <Separator prefWidth="200.0" />
+
+                    <GridPane prefHeight="155.0" prefWidth="200.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <Button fx:id="spostaAvanti" mnemonicParsing="false" onMouseClicked="#gestoreSpostaAvanti" prefHeight="38.0" prefWidth="103.0" text="Avanti">
+                                <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@risorse/icone/alto.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="spostaDietro" mnemonicParsing="false" onMouseClicked="#gestoreSpostaDietro" prefHeight="40.0" prefWidth="110.0" text="Indietro" GridPane.columnIndex="1">
+                                <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@risorse/icone/basso.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="copiaForma" mnemonicParsing="false" onMouseClicked="#gestoreCopiaForma" prefHeight="40.0" prefWidth="100.0" text="Copia" GridPane.rowIndex="1">
+                                <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@risorse/icone/copia.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="incollaForma" mnemonicParsing="false" onMouseClicked="#gestoreIncollaForma" prefHeight="40.0" prefWidth="106.0" text="Incolla" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@risorse/icone/incolla.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="tagliaForma" mnemonicParsing="false" onMouseClicked="#gestoreTagliaForma" prefHeight="40.0" prefWidth="101.0" text="Taglia" GridPane.rowIndex="2">
+                                <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@risorse/icone/taglia.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="eliminaForma" mnemonicParsing="false" onMouseClicked="#gestoreEliminaForma" prefHeight="40.0" prefWidth="105.0" text="Elimina" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <graphic>
+                                    <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@risorse/icone/elimina.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                     <Button fx:id="specchioOrizzontale" mnemonicParsing="false" onMouseClicked="#gestoreMirroringOrizzontale" prefHeight="40.0" prefWidth="109.0" text="Oriz." visible="false" GridPane.rowIndex="3">
+                        <graphic>
+                           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@risorse/icone/oriz.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                     </Button>
+                     <Button fx:id="specchioVerticale" mnemonicParsing="false" onMouseClicked="#gestoreMirroringVerticale" prefHeight="40.0" prefWidth="121.0" text="Vert." visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <graphic>
+                           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@risorse/icone/vert.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                     </Button>
+                        </children>
+                    </GridPane>            
+                </VBox>
+            </children>
+        </AnchorPane>
+    </center>
+</BorderPane>
