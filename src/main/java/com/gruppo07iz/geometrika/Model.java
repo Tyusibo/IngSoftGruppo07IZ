@@ -206,8 +206,6 @@ public class Model {
         formaCopiata.cambiaCoordinate(coordinataX, coordinataY);
     }
 
-    public void incollaGruppo(Pane lavagna, Gruppo gruppo, double coordinataX, double coordinataY) {
-    }
 
     /**
      * Crea un nuovo gruppo a partire da una lista di forme fornite come input.
