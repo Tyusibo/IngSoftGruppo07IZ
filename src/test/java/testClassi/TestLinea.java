@@ -1,8 +1,5 @@
 package testClassi;
-
-import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 import com.gruppo07iz.geometrika.forme.Linea;
-import com.gruppo07iz.geometrika.forme.Rettangolo;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;

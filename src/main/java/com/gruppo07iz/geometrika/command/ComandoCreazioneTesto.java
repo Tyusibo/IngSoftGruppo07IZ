@@ -4,7 +4,6 @@ import com.gruppo07iz.geometrika.Model;
 import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 
 public class ComandoCreazioneTesto implements CommandInterface{
     private final Model receiver;

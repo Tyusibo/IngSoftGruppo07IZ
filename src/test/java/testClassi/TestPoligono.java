@@ -1,8 +1,6 @@
 package testClassi;
-import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 import com.gruppo07iz.geometrika.forme.Poligono;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
