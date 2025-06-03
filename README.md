@@ -28,9 +28,9 @@ Di seguito sono riportati dei link che rimandano allo stesso materiale, presenta
 
 ## THIRD SPRINT
 
-### [Third Sprint Plannig]()
+### [Third Sprint Plannig](https://docs.google.com/document/d/1Q6p5f6BaksmKL1TiRD4zH8Cx4vJ3gk1g9XKspoxGQpE/edit?usp=sharing)
 
-### [Third Sprint Report]()
+### [Third Sprint Report](https://docs.google.com/document/d/1g2Jx0lsHEy9Ec45TMRuGhacE0EoeWusiqr-lzWmv6W4/edit?usp=sharing)
 
 ### [Presentazione_Power_Point]()
 
