@@ -564,6 +564,7 @@ public class DashboardController implements Initializable {
     @FXML
     public void annullaUltimoComando() {
         if (!this.pilaComandi.isEmpty()) {
+            aggiornaStile(null);
             CommandInterface comando = this.pilaComandi.pop();
             comando.undo();
 
