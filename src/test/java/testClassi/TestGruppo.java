@@ -1,17 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package testClassi;
 
-import com.gruppo07iz.geometrika.Model;
-import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 import com.gruppo07iz.geometrika.forme.Gruppo;
-import com.gruppo07iz.geometrika.forme.Linea;
-import com.gruppo07iz.geometrika.forme.Rettangolo;
-import java.util.Map;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- * @author Andrea Vitolo
- */
 public class TestGruppo {
     
     @BeforeAll

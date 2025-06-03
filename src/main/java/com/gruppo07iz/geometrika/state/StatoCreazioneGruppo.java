@@ -4,7 +4,6 @@ import com.gruppo07iz.geometrika.DashboardController;
 import com.gruppo07iz.geometrika.Model;
 import com.gruppo07iz.geometrika.command.ComandoCreazioneGruppo;
 import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
-import com.gruppo07iz.geometrika.forme.Gruppo;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.effect.DropShadow;
