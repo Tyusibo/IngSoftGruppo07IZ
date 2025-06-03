@@ -739,8 +739,7 @@ public class TestComandi {
         controller.aggiungiComandoNellaPila(comando1);
         
         double[] coordinateInizialiDopoPrimoTrascinamento = forma.ottieniCoordinate();
-        System.err.println("Coordinate dopo primo trascinamento: " + coordinateInizialiDopoPrimoTrascinamento[0] + ", " + coordinateInizialiDopoPrimoTrascinamento[1]);
-
+        
         // Secondo trascinamento
         ComandoTrascina comando2 = new ComandoTrascina(modello, forma);
         comando2.aggiorna(20, 20);
