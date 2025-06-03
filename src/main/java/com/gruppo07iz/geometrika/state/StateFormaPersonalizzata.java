@@ -2,23 +2,22 @@ package com.gruppo07iz.geometrika.state;
 
 import com.gruppo07iz.geometrika.DashboardController;
 import com.gruppo07iz.geometrika.Model;
-import com.gruppo07iz.geometrika.forme.TipoFormaRegolare;
-import com.gruppo07iz.geometrika.command.ComandoCreazioneFormaRegolare;
+import com.gruppo07iz.geometrika.command.ComandoIncolla;
 import com.gruppo07iz.geometrika.command.CommandInterface;
-import javafx.scene.control.ColorPicker;
+import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
+import com.gruppo07iz.geometrika.forme.Gruppo;
+
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-public class StateCreazioneFormaRegolare implements StateInterface{
+public class StateFormaPersonalizzata implements StateInterface{
     private final Model modello;
     private final DashboardController controller;
     private final Pane lavagna;
     
-    private TipoFormaRegolare formaDaCreare;
-    private final ColorPicker coloreRiempimentoCreazione;
-    private final ColorPicker coloreBordoCreazione;
-
+    private FormaPersonalizzabile formaPersonalizzata;
+    
     /**
      * Costruttore dello stato di creazione forma regolare.
      *
@@ -29,14 +28,11 @@ public class StateCreazioneFormaRegolare implements StateInterface{
      * @param coloreBordoCreazione Il selettore del colore del bordo.
      * @param controller Il controller della dashboard per la gestione dei comandi.
      */
-    public StateCreazioneFormaRegolare(Model modello, DashboardController controller, Pane lavagna, TipoFormaRegolare formaDaCreare, ColorPicker coloreRiempimentoCreazione, ColorPicker coloreBordoCreazione) {
+    public StateFormaPersonalizzata(Model modello, DashboardController controller, Pane lavagna) {
         this.modello = modello;
         this.controller = controller;
         this.lavagna = lavagna;
-        
-        this.formaDaCreare = formaDaCreare;
-        this.coloreRiempimentoCreazione = coloreRiempimentoCreazione;
-        this.coloreBordoCreazione = coloreBordoCreazione; 
+       
     }
     
     /**
@@ -44,8 +40,8 @@ public class StateCreazioneFormaRegolare implements StateInterface{
      *
      * @param formaDaCreare Il nuovo tipo di forma regolare.
      */
-    public void setFormaDaCreare(TipoFormaRegolare formaDaCreare){
-        this.formaDaCreare = formaDaCreare;
+    public void setFormaPersonalizzata(FormaPersonalizzabile formaPersonalizzata){
+        this.formaPersonalizzata = formaPersonalizzata;
     }
     
     /**
@@ -62,9 +58,17 @@ public class StateCreazioneFormaRegolare implements StateInterface{
 
         // Delego la responsabilità di creazione al comando, fornisco coordinate e colori
         // Le dimensioni sono di default
-        CommandInterface comando = new ComandoCreazioneFormaRegolare(modello, lavagna,
-                formaDaCreare, inizioX, inizioY,
-                coloreRiempimentoCreazione.getValue(), coloreBordoCreazione.getValue());
+
+        FormaPersonalizzabile formaClonata = formaPersonalizzata.clonaForma();
+
+        if(formaClonata instanceof Gruppo){
+            Gruppo gruppo = (Gruppo) formaClonata;
+            for (FormaPersonalizzabile forma : gruppo.getVettoreForme()) {
+                controller.mappaFormeGruppi.put(forma, gruppo);
+            }
+        }
+
+        CommandInterface comando = new ComandoIncolla(modello, lavagna, formaClonata, inizioX, inizioY);
 
         controller.eseguiComando(comando);
     }

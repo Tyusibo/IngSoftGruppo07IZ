@@ -6,20 +6,17 @@ import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 public class ComandoTrascina implements CommandInterface {
     private final Model receiver;
     private final FormaPersonalizzabile forma;
-    // Per salvare l'accumulo dei vari trascinamenti
-    // Da quando viene premuto con il mouse fino al rilascio
     private double deltaXTotale = 0;
     private double deltaYTotale = 0;
-    // Per eseguire a ogni esecuzione l'ultimo spostamento avvenuto sulla GUI
     private double ultimoOffsetX;
     private double ultimoOffsetY;
-    
+
 
     /**
-     * Costruttore del comando di trascinamento.
+     * Costruttore del comando.
      * 
-     * @param receiver L'oggetto modello che gestisce le operazioni sulle forme.
-     * @param forma La forma personalizzabile da trascinare.
+     * @param receiver Il modello che gestisce lo spostamento della forma.
+     * @param forma La forma da trascinare.
      */
     public ComandoTrascina(Model receiver, FormaPersonalizzabile forma) {
         this.receiver = receiver;
@@ -27,12 +24,10 @@ public class ComandoTrascina implements CommandInterface {
     }
 
     /**
-     * Aggiorna gli ultimi offset di trascinamento.
-     * Questo metodo deve essere chiamato durante il trascinamento per fornire 
-     * i valori correnti degli spostamenti sull'asse X e Y.
+     * Aggiorna l'offset del trascinamento che verrà usato nel prossimo execute().
      * 
-     * @param offsetX Spostamento orizzontale corrente.
-     * @param offsetY Spostamento verticale corrente.
+     * @param offsetX Lo spostamento lungo l'asse X.
+     * @param offsetY Lo spostamento lungo l'asse Y.
      */
     public void aggiorna(double offsetX, double offsetY) {
         this.ultimoOffsetX = offsetX;
@@ -40,23 +35,22 @@ public class ComandoTrascina implements CommandInterface {
     }
 
     /**
-     * Esegue il comando di trascinamento della forma con gli ultimi offset aggiornati.
-     * Accumula gli spostamenti totali effettuati per poterli annullare.
+     * Esegue il trascinamento applicando l'offset più recente e accumulando
+     * lo spostamento totale per l’operazione di undo.
      * 
-     * @return false (indicando che questo comando non va memorizzato automaticamente nella pila).
+     * @return false poiché questo comando può essere eseguito ripetutamente durante il drag.
      */
     @Override
     public boolean execute() {
         receiver.trascinaForma(forma, ultimoOffsetX, ultimoOffsetY);
-        // Mantengo aggiornati gli accumuli
         deltaXTotale += ultimoOffsetX;
         deltaYTotale += ultimoOffsetY;
         return false;
     }
-    
+
     /**
-     * Annulla il comando di trascinamento riportando la forma alla posizione iniziale,
-     * spostandola di quanto accumulato nei delta totali in direzione opposta.
+     * Annulla tutti gli spostamenti applicati durante l’esecuzione del comando,
+     * riportando la forma nella posizione iniziale.
      */
     @Override
     public void undo() {

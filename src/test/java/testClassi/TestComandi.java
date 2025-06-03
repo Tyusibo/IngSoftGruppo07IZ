@@ -5,10 +5,17 @@ import com.gruppo07iz.geometrika.command.*;
 import com.gruppo07iz.geometrika.forme.FormaBidimensionale;
 import com.gruppo07iz.geometrika.forme.FormaMonodimensionale;
 import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
+import com.gruppo07iz.geometrika.forme.Gruppo;
+import com.gruppo07iz.geometrika.forme.Poligono;
 import com.gruppo07iz.geometrika.forme.TipoFormaRegolare;
+import com.gruppo07iz.geometrika.forme.Rettangolo;
+import com.gruppo07iz.geometrika.forme.Testo;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -17,7 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 /**
@@ -28,17 +35,29 @@ public class TestComandi {
     private static DashboardController controller;
     private static Model modello;
 
-    @BeforeAll
-    public static void setup() {
-        // Necessario per inizializzare JavaFX
-        Platform.startup(() -> {});
+    @BeforeEach
+    public void setup() throws InterruptedException {
+        if (!Platform.isFxApplicationThread()) {
+            CountDownLatch latch = new CountDownLatch(1);
+            new Thread(() -> {
+                try {
+                    Platform.startup(() -> {
+                        latch.countDown();
+                    });
+                } catch (IllegalStateException e) {
+                    latch.countDown();
+                }
+            }).start();
+            latch.await();
+        }
         modello = new Model();
         controller = new DashboardController();
         controller.lavagna = new Pane();
-        controller.pilaComandi= new Stack<CommandInterface>();
-        controller.pannelloModifica=new VBox();
-
+        controller.pilaComandi = new Stack<>();
+        controller.pannelloModifica = new VBox();
+        controller.mappaFormeGruppi = new HashMap<>();
     }
+
 
     /**
      * Test per verificare il comando di creazione di forme regolari.
@@ -53,13 +72,258 @@ public class TestComandi {
         
         assertTrue(comando.getFormaCreata() instanceof Shape); //verifica che l'esecuzione del comando ha creato una Shape
         //verifica che la forma sia stata creata con le proprietà desiderate
-        assertEquals(Color.RED, comando.getFormaCreata().getFill());
-        assertEquals(Color.BLUE, comando.getFormaCreata().getStroke());
+        assertEquals(Color.RED, comando.getFormaCreata().getColoreRiempimento());
+        assertEquals(Color.BLUE, comando.getFormaCreata().getColoreBordo());
         assert(controller.lavagna.getChildren().contains(comando.getFormaCreata()));
         
         controller.annullaUltimoComando();
         assertEquals(figliLavagna,controller.lavagna.getChildren());  //verifica che l'annullamento del comando è andato a buon fine
     }
+    
+     /**
+     * Test per verificare il comando di creazione del testo.
+     * Controlla la corretta creazione del testo, le proprietà grafiche impostate
+     * e il corretto funzionamento dell'operazione di annullamento.
+     */
+    @Test
+    public void testComandoCreazioneTesto(){
+        ObservableList <Node> figliLavagna = controller.lavagna.getChildren();
+        String testo = new String("Comando testo");
+        ComandoCreazioneTesto comando = new ComandoCreazioneTesto(modello, controller.lavagna, testo, 0, 0, Color.RED, Color.BLUE, 20.0);
+        controller.eseguiComando(comando);
+        
+        assertTrue(comando.getTesto() instanceof Shape); //verifica che l'esecuzione del comando ha creato una Shape
+        assertTrue(comando.getTesto() instanceof Testo); //verifica che l'esecuzione del comando ha creato un Testo
+        //verifica che il testo sia stato creato con le proprietà desiderate
+        assertEquals(Color.RED, comando.getTesto().getColoreRiempimento());
+        assertEquals(Color.BLUE, comando.getTesto().getColoreBordo());
+        assert(controller.lavagna.getChildren().contains(comando.getTesto()));
+        
+        controller.annullaUltimoComando();
+        assertEquals(figliLavagna,controller.lavagna.getChildren());  //verifica che l'annullamento del comando è andato a buon fine
+    }
+    
+    /**
+     * Test per verificare il comando di creazione del poligono.
+     * Controlla la corretta creazione del poligono, con le proprietà grafiche impostate,
+     * e il corretto funzionamento dell'operazione di annullamento.
+     */
+    @Test
+    public void testComandoCreazionePoligono(){
+        ObservableList <Node> figliLavagna = controller.lavagna.getChildren();
+        List <Double> puntiPoligono = new ArrayList<>();
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(20.0);
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(20.0);
+        puntiPoligono.add(20.0);
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(20.0);
+        ComandoCreazionePoligono comando = new ComandoCreazionePoligono(modello, controller.lavagna, puntiPoligono, Color.RED, Color.BLUE);
+        controller.eseguiComando(comando);
+        assertTrue(comando.getFormaCreata() instanceof Shape); //verifica che l'esecuzione del comando ha creato una Shape
+        assertTrue(comando.getFormaCreata() instanceof Poligono); //verifica che l'esecuzione del comando ha creato un Poligono
+        //verifica che la forma sia stata creata con le proprietà desiderate
+        assertEquals(Color.RED, comando.getFormaCreata().getColoreRiempimento());
+        assertEquals(Color.BLUE, comando.getFormaCreata().getColoreBordo());
+        assert(controller.lavagna.getChildren().contains(comando.getFormaCreata()));
+        
+        controller.annullaUltimoComando();
+        assertEquals(figliLavagna,controller.lavagna.getChildren());  //verifica che l'annullamento del comando è andato a buon fine
+    }
+    
+    /**
+    * Verifica il corretto comportamento del comando {@link ComandoCreazioneGruppo}.
+    * Il test esegue i seguenti passaggi:
+    *     Crea due forme regolari e le aggiunge alla lavagna
+    *     Raggruppa le due forme in un nuovo gruppo
+    *     Verifica che il gruppo contenga le forme previste
+    *     Applica l'operazione di undo
+    *     Verifica che il gruppo sia stato svuotato e che le forme non siano più associate a un gruppo
+    */
+    @Test
+    public void testComandoCreazioneGruppoFormeRegolari() {
+        // Step 1: Creazione delle forme e aggiunta alla lavagna
+        ComandoCreazioneFormaRegolare comando1 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna,
+                TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
+        controller.eseguiComando(comando1);
+        FormaPersonalizzabile forma1 = comando1.getFormaCreata();
+
+        ComandoCreazioneFormaRegolare comando2 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna,
+                TipoFormaRegolare.RETTANGOLO, 10, 10, Color.BLUE, Color.RED);
+        controller.eseguiComando(comando2);
+        FormaPersonalizzabile forma2 = comando2.getFormaCreata();
+
+        // Step 2: Raccolta delle forme da raggruppare
+        List<FormaPersonalizzabile> formeDaRaggruppare = List.of(forma1, forma2);
+
+        // Step 3: Esecuzione del comando di creazione gruppo
+        ComandoCreazioneGruppo comandoGruppo = new ComandoCreazioneGruppo(modello, controller.lavagna,
+                formeDaRaggruppare, controller.mappaFormeGruppi);
+        controller.eseguiComando(comandoGruppo);
+        Gruppo gruppoCreato = comandoGruppo.getGruppoCreato();
+
+        // Step 4: Verifiche
+        assertNotNull(gruppoCreato, "Il gruppo non dovrebbe essere null");
+        assertEquals(2, gruppoCreato.getVettoreForme().size(), "Il gruppo deve contenere esattamente due forme");
+        assertTrue(gruppoCreato.getVettoreForme().contains(forma1));
+        assertTrue(gruppoCreato.getVettoreForme().contains(forma2));
+
+        // Verifica (opzionale) che la lavagna contenga ancora le forme
+        assertTrue(controller.lavagna.getChildren().contains(forma1));
+        assertTrue(controller.lavagna.getChildren().contains(forma2));
+
+        // Step 5: Undo
+        controller.annullaUltimoComando();
+
+        // Step 6: Verifica che il gruppo sia stato svuotato
+        assertTrue(!controller.mappaFormeGruppi.containsValue(gruppoCreato), "Il gruppo deve essere svuotato dopo undo");
+
+        // Verifica che le forme non siano più associate a un gruppo
+        assertFalse(controller.mappaFormeGruppi.containsKey(forma1));
+        assertFalse(controller.mappaFormeGruppi.containsKey(forma2));
+    }
+
+        /**
+    * Verifica il corretto comportamento del comando {@link ComandoCreazioneGruppo}.
+    * Il test esegue i seguenti passaggi:
+    *     Crea due forme regolari e le aggiunge alla lavagna
+    *     Crea un poligono e lo aggiunge alla lavagna
+    *     Crea un testo e lo aggiunge alla lavagna
+    *     Raggruppa le due forme, il poligono e il testo in un nuovo gruppo
+    *     Verifica che il gruppo contenga le forme previste
+    *     Applica l'operazione di undo
+    *     Verifica che il gruppo sia stato svuotato e che le forme non siano più associate a un gruppo
+    */
+    @Test
+    public void testComandoCreazioneGruppoFormeRegolariPoligonoTesto() {
+        
+        // Step 1: Creazione delle forme e aggiunta alla lavagna
+        ComandoCreazioneFormaRegolare comando1 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna,
+                TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
+        controller.eseguiComando(comando1);
+        FormaPersonalizzabile forma1 = comando1.getFormaCreata();
+
+        ComandoCreazioneFormaRegolare comando2 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna,
+                TipoFormaRegolare.RETTANGOLO, 10, 10, Color.BLUE, Color.RED);
+        controller.eseguiComando(comando2);
+        FormaPersonalizzabile forma2 = comando2.getFormaCreata();
+        
+        // Step 2: Creazione di un poligono e aggiunta alla lavagna
+        String stringaTesto = new String("Comando testo");
+        ComandoCreazioneTesto comando3 = new ComandoCreazioneTesto(modello, controller.lavagna, stringaTesto, 0, 0, Color.RED, Color.BLUE, 20.0);
+        controller.eseguiComando(comando3);
+        FormaPersonalizzabile testo = comando3.getTesto();
+        
+        // Step 3: Creazione di un testo e aggiunta alla lavagna
+        List <Double> puntiPoligono = new ArrayList<>();
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(20.0);
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(20.0);
+        puntiPoligono.add(20.0);
+        puntiPoligono.add(10.0);
+        puntiPoligono.add(20.0);
+        ComandoCreazionePoligono comando4 = new ComandoCreazionePoligono(modello, controller.lavagna, puntiPoligono, Color.RED, Color.BLUE);
+        controller.eseguiComando(comando4);
+        FormaPersonalizzabile poligono = comando4.getFormaCreata();
+        
+        // Step 4: Raccolta delle forme da raggruppare
+        List<FormaPersonalizzabile> formeDaRaggruppare = List.of(forma1, forma2, testo, poligono);
+
+        // Step 5: Esecuzione del comando di creazione gruppo
+        ComandoCreazioneGruppo comandoGruppo = new ComandoCreazioneGruppo(modello, controller.lavagna,
+                formeDaRaggruppare, controller.mappaFormeGruppi);
+        controller.eseguiComando(comandoGruppo);
+        Gruppo gruppoCreato = comandoGruppo.getGruppoCreato();
+
+        // Step 6: Verifiche
+        assertNotNull(gruppoCreato, "Il gruppo non dovrebbe essere null");
+        assertEquals(4, gruppoCreato.getVettoreForme().size(), "Il gruppo deve contenere esattamente quattro forme, ovvero due forme regolari, un testo e un poligono");
+        assertTrue(gruppoCreato.getVettoreForme().contains(forma1));
+        assertTrue(gruppoCreato.getVettoreForme().contains(forma2));
+        assertTrue(gruppoCreato.getVettoreForme().contains(testo));
+        assertTrue(gruppoCreato.getVettoreForme().contains(poligono));
+
+        // Verifica (opzionale) che la lavagna contenga ancora le forme
+        assertTrue(controller.lavagna.getChildren().contains(forma1));
+        assertTrue(controller.lavagna.getChildren().contains(forma2));
+        assertTrue(controller.lavagna.getChildren().contains(testo));
+        assertTrue(controller.lavagna.getChildren().contains(poligono));
+        
+        // Step 7: Undo
+        controller.annullaUltimoComando();
+
+        // Step 8: Verifica che il gruppo sia stato svuotato
+        System.out.println(gruppoCreato.getVettoreForme().toString());
+        assertTrue(!controller.mappaFormeGruppi.containsValue(gruppoCreato), "Il gruppo deve essere svuotato dopo undo");
+
+        // Verifica che le forme non siano più associate a un gruppo
+        assertFalse(controller.mappaFormeGruppi.containsKey(forma1));
+        assertFalse(controller.mappaFormeGruppi.containsKey(forma2));
+        assertFalse(controller.mappaFormeGruppi.containsKey(testo));
+        assertFalse(controller.mappaFormeGruppi.containsKey(poligono));
+    }
+    
+    /**
+    * Verifica il corretto comportamento del comando {@link ComandoSeparazioneGruppo}.
+    * Il test esegue i seguenti passaggi:
+    *     Crea due forme e le raggruppa
+    *     Associa le forme al gruppo nella mappa
+    *     Esegue la separazione rimuovendo le associazioni
+    *     Verifica che le forme non siano più associate a un gruppo
+    *     Esegue l'operazione di undo della separazione
+    *     Verifica che le forme siano nuovamente associate a un nuovo gruppo
+    */
+    @Test
+    public void testComandoSeparazioneGruppo() {
+        // Crea due forme e aggiungile alla lavagna
+        ComandoCreazioneFormaRegolare comando1 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.GREEN, Color.BLACK);
+        controller.eseguiComando(comando1);
+        FormaPersonalizzabile forma1 = comando1.getFormaCreata();
+
+        ComandoCreazioneFormaRegolare comando2 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 20, 20, Color.YELLOW, Color.BLUE);
+        controller.eseguiComando(comando2);
+        FormaPersonalizzabile forma2 = comando2.getFormaCreata();
+
+        // Raggruppa le forme
+        List<FormaPersonalizzabile> formeDaRaggruppare = List.of(forma1, forma2);
+        ComandoCreazioneGruppo comandoGruppo = new ComandoCreazioneGruppo(modello, controller.lavagna, formeDaRaggruppare, controller.mappaFormeGruppi);
+        controller.eseguiComando(comandoGruppo);
+
+        Gruppo gruppoCreato = comandoGruppo.getGruppoCreato();
+        // Associa le forme alla mappa
+        for (FormaPersonalizzabile f : formeDaRaggruppare) {
+            controller.mappaFormeGruppi.put(f, gruppoCreato);
+        }
+
+        // Verifica che le associazioni siano presenti
+        assertEquals(gruppoCreato, controller.mappaFormeGruppi.get(forma1));
+        assertEquals(gruppoCreato, controller.mappaFormeGruppi.get(forma2));
+        
+        // Esegui il comando di separazione
+        ComandoSeparazioneGruppo comandoSeparazione = new ComandoSeparazioneGruppo(modello, controller.lavagna, gruppoCreato, controller.mappaFormeGruppi);
+        controller.eseguiComando(comandoSeparazione);
+
+        // Verifica che le forme siano state rimosse dalla mappa
+        assertFalse(controller.mappaFormeGruppi.containsKey(forma1));
+        assertFalse(controller.mappaFormeGruppi.containsKey(forma2));
+
+        // Undo del comando di separazione
+        controller.annullaUltimoComando();
+
+        // Verifica che le associazioni siano ripristinate con un nuovo gruppo
+        assertTrue(controller.mappaFormeGruppi.containsKey(forma1));
+        assertTrue(controller.mappaFormeGruppi.containsKey(forma2));
+
+        Gruppo gruppoRicreato = controller.mappaFormeGruppi.get(forma1);
+        assertSame(gruppoRicreato, controller.mappaFormeGruppi.get(forma2), "Le due forme devono appartenere allo stesso gruppo ricreato");
+
+        assertEquals(2, gruppoRicreato.getVettoreForme().size(), "Il gruppo ricreato deve contenere entrambe le forme");
+    }
+
     
    
     /**
@@ -73,7 +337,7 @@ public class TestComandi {
         ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
         controller.eseguiComando(comandoCreazione);
         ObservableList <Node> figliLavagnaFormaCreata = controller.lavagna.getChildren();
-        Shape forma = comandoCreazione.getFormaCreata();
+        FormaPersonalizzabile forma = comandoCreazione.getFormaCreata();
         ComandoEliminazione comando = new ComandoEliminazione(modello, controller.lavagna, forma);
         controller.eseguiComando(comando);
         assertEquals(figliLavagnaIniziale, controller.lavagna.getChildren());   //verifica che il comando di eliminazione è andato a buon fine
@@ -82,7 +346,47 @@ public class TestComandi {
     }
 
     
+    /**
+     * Test per verificare il comando di modifica angolo di una forma.
+     * Verifica che la rotazione venga applicata correttamente e che l'operazione di annullamento
+     * ripristini l'angolo originale.
+     */
+    @Test
+    public void testComandoCambiaAngolo(){
+        ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
+        controller.eseguiComando(comandoCreazione);
+        double angoloVecchio = comandoCreazione.getFormaCreata().getAngolo();
+        ComandoCambiaAngolo comando = new ComandoCambiaAngolo(modello, comandoCreazione.getFormaCreata(), 30);
+        controller.eseguiComando(comando);
+        assertEquals(comando.getAngolo(), 30);  //verifica che l'esecuzione del comando è andata a buon fine
+        controller.annullaUltimoComando();
+        assertEquals(angoloVecchio,comandoCreazione.getFormaCreata().getAngolo());   //verifica che l'annullamento del comando è andata a buon fine   
+    }
 
+    /**
+     * Test per verificare il comportamento del comando di modifica angolo con valori limite.
+     * Controlla il corretto handling di angoli negativi e valori superiori a 360 gradi,
+     * verificando anche il ripristino dello stato dopo l'annullamento.
+     */
+    @Test
+    public void testComandoCambiaAngoloAngoloNegativoEMaggiore360() {
+        ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
+        controller.eseguiComando(comandoCreazione);
+        FormaPersonalizzabile forma = comandoCreazione.getFormaCreata();
+        
+        ComandoCambiaAngolo comandoNegativo = new ComandoCambiaAngolo(modello, forma, -30);
+        controller.eseguiComando(comandoNegativo);
+        assertEquals(-30, forma.getAngolo(), 0.01);
+        controller.annullaUltimoComando();
+        assertEquals(0, forma.getAngolo(), 0.01);
+        
+        ComandoCambiaAngolo comandoOversize = new ComandoCambiaAngolo(modello, forma, 450);
+        controller.eseguiComando(comandoOversize);
+        assertEquals(450, forma.getAngolo(), 0.01);
+        controller.annullaUltimoComando();
+        assertEquals(0, forma.getAngolo(), 0.01);
+    }
+    
     /**
      * Test per verificare il comportamento del comando di eliminazione quando viene
      * tentata la rimozione di una forma non presente nella lavagna.
@@ -90,9 +394,10 @@ public class TestComandi {
      */
     @Test
     public void testComandoEliminazioneFormaNonEsistente() {
-        Shape formaFittizia = new Rectangle(0, 0, 10, 10);
+        FormaPersonalizzabile formaFittizia = new Rettangolo(150,150, Color.ALICEBLUE, Color.YELLOWGREEN);
+
         ComandoEliminazione comando = new ComandoEliminazione(modello, controller.lavagna, formaFittizia);
-        
+
         assertThrows(IllegalArgumentException.class, () -> {
             controller.eseguiComando(comando);
         }, "Dovrebbe lanciare un'eccezione per forma non presente");
@@ -109,7 +414,7 @@ public class TestComandi {
         controller.eseguiComando(comandoCreazione);
         List<Node> figliLavagnaPrima = new ArrayList<>(controller.lavagna.getChildren());
 
-        Shape forma = ((FormaPersonalizzabile) comandoCreazione.getFormaCreata()).clonaForma();
+        FormaPersonalizzabile forma = (comandoCreazione.getFormaCreata()).clonaForma();
         ComandoIncolla comando = new ComandoIncolla(modello, controller.lavagna, forma, 1, 1);
         controller.eseguiComando(comando);
 
@@ -130,15 +435,15 @@ public class TestComandi {
     public void testComandoIncollaModificaCloneNonInfluenzaOriginale() {
         ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
         controller.eseguiComando(comandoCreazione);
-        Shape originale = comandoCreazione.getFormaCreata();
-        Shape clone = ((FormaPersonalizzabile) originale).clonaForma();
+        FormaPersonalizzabile originale = comandoCreazione.getFormaCreata();
+        FormaPersonalizzabile clone = originale.clonaForma();
         
         ComandoIncolla comandoIncolla = new ComandoIncolla(modello, controller.lavagna, clone, 10, 10);
         controller.eseguiComando(comandoIncolla);
         
         // Modifica il clone e verifica che l'originale non cambia
-        clone.setFill(Color.GREEN);
-        assertNotEquals(originale.getFill(), clone.getFill());
+        clone.setColoreRiempimento(Color.GREEN);
+        assertNotEquals(originale.getColoreRiempimento(), clone.getColoreRiempimento());
     }
 
     /**
@@ -150,9 +455,9 @@ public class TestComandi {
     public void testComandoModificaColoreBordo(){
         ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.WHITE);
         controller.eseguiComando(comandoCreazione);
-        Shape forma = comandoCreazione.getFormaCreata();
-        Color coloreBordoVecchio=(Color)forma.getStroke();
-        ComandoModificaColoreBordo comando = new ComandoModificaColoreBordo(modello, forma, Color.BLUE);
+        FormaPersonalizzabile forma = comandoCreazione.getFormaCreata();
+        Color coloreBordoVecchio=forma.getColoreBordo();
+        ComandoModificaColoreBordoSingolo comando = new ComandoModificaColoreBordoSingolo(modello, forma, Color.BLUE);
         controller.eseguiComando(comando);
         assertEquals(comando.getColoreBordo(), Color.BLUE); //verifica che l'esecuzione del comando sia andato a buon fine confrontando il nuovo colore di bordo
         controller.annullaUltimoComando();
@@ -168,14 +473,14 @@ public class TestComandi {
     public void testComandoModificaColoreBordoANull() {
         ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
         controller.eseguiComando(comandoCreazione);
-        Shape forma = comandoCreazione.getFormaCreata();
+        FormaPersonalizzabile forma = comandoCreazione.getFormaCreata();
         
-        ComandoModificaColoreBordo comando = new ComandoModificaColoreBordo(modello, forma, null);
+        ComandoModificaColoreBordoSingolo comando = new ComandoModificaColoreBordoSingolo(modello, forma, null);
         controller.eseguiComando(comando);
         
-        assertNull(forma.getStroke());
+        assertNull(forma.getColoreBordo());
         controller.annullaUltimoComando();
-        assertEquals(Color.BLUE, forma.getStroke());
+        assertEquals(Color.BLUE, forma.getColoreBordo());
     }
     
     /**
@@ -187,9 +492,9 @@ public class TestComandi {
     public void testComandoModificaColoreRiempimento(){
         ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.WHITE);
         controller.eseguiComando(comandoCreazione);
-        Shape forma = comandoCreazione.getFormaCreata();
-        Color coloreRiempimentoVecchio=(Color)forma.getFill();
-        ComandoModificaColoreRiempimento comando = new ComandoModificaColoreRiempimento(modello, forma, Color.BLUE);
+        FormaPersonalizzabile forma = comandoCreazione.getFormaCreata();
+        Color coloreRiempimentoVecchio=(Color)forma.getColoreRiempimento();
+        ComandoModificaColoreRiempimentoSingolo comando = new ComandoModificaColoreRiempimentoSingolo(modello, forma, Color.BLUE);
         controller.eseguiComando(comando);
         assertEquals(comando.getColoreRiempimento(), Color.BLUE); //verifica che l'esecuzione del comando sia andato a buon fine confrontando il nuovo colore di bordo
         controller.annullaUltimoComando();
@@ -282,15 +587,15 @@ public class TestComandi {
         ComandoCreazioneFormaRegolare comando2 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 10, 10, Color.GREEN, Color.YELLOW);
         controller.eseguiComando(comando1);
         controller.eseguiComando(comando2);
-        Shape formaDaSpostare = comando1.getFormaCreata();
-        Shape secondaForma = comando2.getFormaCreata();
+        FormaPersonalizzabile formaDaSpostare = comando1.getFormaCreata();
+        FormaPersonalizzabile secondaForma = comando2.getFormaCreata();
         
-        Pane padre = (Pane) formaDaSpostare.getParent();
+        Pane padre = (Pane) ((Shape)formaDaSpostare).getParent();
         ObservableList<Node> figli = padre.getChildren();
         int posizioneInizialeFormaDaSpostare = figli.indexOf(formaDaSpostare);
         int posizioneInizialeSecondaForma = figli.indexOf(secondaForma);
         
-        ComandoSpostaAvanti comando = new ComandoSpostaAvanti(modello, formaDaSpostare);
+        ComandoSpostaAvanti comando = new ComandoSpostaAvanti(modello, padre, formaDaSpostare);
         controller.eseguiComando(comando);
         assertEquals(posizioneInizialeSecondaForma, figli.indexOf(formaDaSpostare)); //verifica che l'esecuzione del comando è andata a buon fine 
                                                                                     //vedendo se la nuova posizione della forma da spostare è uguale all'iniziale della seconda forma
@@ -313,10 +618,11 @@ public class TestComandi {
         controller.eseguiComando(comando1);
         controller.eseguiComando(comando2);
         
-        Shape forma2 = comando2.getFormaCreata();
+        FormaPersonalizzabile forma2 = comando2.getFormaCreata();
+        Pane padre = (Pane) ((Shape)forma2).getParent();
         int posizioneIniziale = controller.lavagna.getChildren().indexOf(forma2);
         
-        ComandoSpostaAvanti comando = new ComandoSpostaAvanti(modello, forma2);
+        ComandoSpostaAvanti comando = new ComandoSpostaAvanti(modello, padre, forma2);
         controller.eseguiComando(comando);
         
         // La forma è già in cima, non dovrebbe muoversi
@@ -331,27 +637,30 @@ public class TestComandi {
     @Test
     public void testComandoSpostaIndietro() {
         ComandoCreazioneFormaRegolare comando1 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
-        ComandoCreazioneFormaRegolare comando2 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 10, 10, Color.GREEN, Color.YELLOW);
+        ComandoCreazioneFormaRegolare comando2 = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 1, 1, Color.GREEN, Color.YELLOW);
         controller.eseguiComando(comando1);
         controller.eseguiComando(comando2);
 
-        Shape forma1 = comando1.getFormaCreata();
-        Shape forma2 = comando2.getFormaCreata();
-        Pane padre = (Pane) forma1.getParent();
+        FormaPersonalizzabile forma1 = comando1.getFormaCreata();
+        FormaPersonalizzabile forma2 = comando2.getFormaCreata();
+        Pane padre = (Pane) ((Shape)forma2).getParent();
         ObservableList<Node> figli = padre.getChildren();
 
-        int posizioneIniziale = figli.indexOf(forma1);
+        int posizioneIniziale = figli.indexOf(forma2);
+        System.out.println("Prima 2:"+posizioneIniziale);
 
-        ComandoSpostaIndietro comando = new ComandoSpostaIndietro(modello, forma1);
-        controller.eseguiComando(comando);
+        ComandoSpostaIndietro comando3 = new ComandoSpostaIndietro(modello, padre, forma2);
+        controller.eseguiComando(comando3);
 
         // Verifica che l'esecuzione sia andata a buon fine ovvero che la forma sia stata spostata dietro (quindi ha indice inferiore)
-        int nuovaPosizione = figli.indexOf(forma1);
+        int nuovaPosizione = figli.indexOf(forma2);
+        
+        System.out.println("Prima 2:"+posizioneIniziale);
         assertTrue(nuovaPosizione < posizioneIniziale);
 
         //Verifica che l'annullamento è andato a buon fiene ovvero che la posizione sia tornata quella iniziale
         controller.annullaUltimoComando();
-        int posizioneRipristinata = figli.indexOf(forma1);
+        int posizioneRipristinata = figli.indexOf(forma2);
         assertEquals(posizioneIniziale, posizioneRipristinata);
     }
 
@@ -366,11 +675,11 @@ public class TestComandi {
         
         ComandoCreazioneFormaRegolare comando = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
         controller.eseguiComando(comando);
-        Shape forma1 = comando.getFormaCreata();
-        
+        FormaPersonalizzabile forma1 = comando.getFormaCreata();
+        Pane padre = (Pane) ((Shape)forma1).getParent();
         int posizioneIniziale = controller.lavagna.getChildren().indexOf(forma1);
         
-        ComandoSpostaIndietro comando1 = new ComandoSpostaIndietro(modello, forma1);
+        ComandoSpostaIndietro comando1 = new ComandoSpostaIndietro(modello, padre, forma1);
         controller.eseguiComando(comando1);
 
         // Non dovrebbe cambiare posizione
@@ -387,18 +696,17 @@ public class TestComandi {
         ComandoCreazioneFormaRegolare comandoCreazione = new ComandoCreazioneFormaRegolare(modello, controller.lavagna, TipoFormaRegolare.RETTANGOLO, 0, 0, Color.RED, Color.BLUE);
         controller.eseguiComando(comandoCreazione);
 
-        Shape forma = comandoCreazione.getFormaCreata();
-        double[] coordinate1 = ((FormaPersonalizzabile) forma).ottieniCoordinate();
+        FormaPersonalizzabile forma = comandoCreazione.getFormaCreata();
+        double[] coordinate1 = forma.ottieniCoordinate();
         double posizioneXIniziale = coordinate1[0];
         double posizioneYIniziale = coordinate1[1];
 
-        FormaPersonalizzabile formaPersonalizzabile = (FormaPersonalizzabile) forma;
-        ComandoTrascina comando = new ComandoTrascina(modello, formaPersonalizzabile);
+        ComandoTrascina comando = new ComandoTrascina(modello, forma);
         comando.aggiorna(15, 10);  // simulazione dello spostamento
         controller.eseguiComando(comando);
         controller.aggiungiComandoNellaPila(comando);
         
-        double[] coordinate2 = ((FormaPersonalizzabile) forma).ottieniCoordinate();
+        double[] coordinate2 = forma.ottieniCoordinate();
         // Verifica che l'esecuzione sia andata a buon fine e che quindi la posizione sia cambiata
         assertEquals(posizioneXIniziale + 15, coordinate2[0], 0.01);
         assertEquals(posizioneYIniziale + 10, coordinate2[1], 0.01);
@@ -407,7 +715,7 @@ public class TestComandi {
         // Verifica che l'annullamento del comando sia andato a buon fine ovvero che la posizione deve tornare a quella iniziale
         controller.annullaUltimoComando();
         
-        double[] coordinate3 = ((FormaPersonalizzabile) forma).ottieniCoordinate();
+        double[] coordinate3 = forma.ottieniCoordinate();
         System.out.println(coordinate3[0]+" "+coordinate3[1]+" PIX: "+posizioneXIniziale+" PIY: "+posizioneYIniziale);
         assertEquals(coordinate1[0], coordinate3[0], 0.01);
         assertEquals(posizioneYIniziale, coordinate3[1], 0.01);

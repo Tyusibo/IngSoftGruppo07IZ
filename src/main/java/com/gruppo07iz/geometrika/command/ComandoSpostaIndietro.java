@@ -1,57 +1,80 @@
 package com.gruppo07iz.geometrika.command;
 
 import com.gruppo07iz.geometrika.Model;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
+import com.gruppo07iz.geometrika.forme.Gruppo;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Shape;
 
 
 public class ComandoSpostaIndietro implements CommandInterface{
     private final Model receiver;
-    private final Shape forma;
     private final Pane padre;
-    // Essenziale per l'undo
-    private final int posizioneIniziale;
+    private final FormaPersonalizzabile formaDaSpostare;
 
+    // Essenziale per l'undo
+    private final List<CommandInterface> listaComandi;
 
     /**
      * Costruttore del comando.
      * 
-     * @param receiver L'oggetto modello che gestisce le operazioni sulle forme.
-     * @param forma La forma da spostare indietro.
+     * @param receiver Il modello dell'applicazione.
+     * @param gruppo Il gruppo di forme da spostare in avanti.
+     * @param padre Il contenitore grafico (Pane) su cui si trovano le forme.
      */
-    public ComandoSpostaIndietro(Model receiver, Shape forma) {
+    public ComandoSpostaIndietro(Model receiver, Pane padre, FormaPersonalizzabile formaDaSpostare) {
         this.receiver = receiver;
-        this.forma = forma;
-        this.padre = (Pane) forma.getParent(); 
+        this.formaDaSpostare = formaDaSpostare;
+        this.padre = padre; 
         
-        this.posizioneIniziale = padre.getChildren().indexOf(forma);
+        this.listaComandi = new ArrayList<>();
     }
 
     /**
-     * Esegue lo spostamento indietro della forma nell'ordine dei nodi del Pane.
-     * Se la forma è già nella prima posizione (dietro a tutti), non fa nulla.
+     * Esegue lo spostamento avanti di ogni forma del gruppo, se non è già in primo piano.
      * 
-     * @return true se lo spostamento è stato effettuato, false se la forma era già in prima posizione.
+     * @return true se almeno una forma è stata spostata; false se tutte erano già in primo piano.
      */
     @Override
     public boolean execute() {
-        // se è nella prima posizione (0) è già quello indietro
-        ObservableList<Node> figli = padre.getChildren();
-        if (figli.get(0) == forma){
-            return false;
+        if(formaDaSpostare instanceof Gruppo){
+            Gruppo gruppo = (Gruppo) formaDaSpostare;
+            
+            // Ottieni il vettore delle forme, ci dovrebbero essere tutte le singole le forme (senza gruppi)
+            List<FormaPersonalizzabile> formeDelGruppo = ((Gruppo) gruppo).getTutteLeForme();
+
+            // Ordina le forme in base all'indice nel parent, in ordine decrescente
+            formeDelGruppo.sort((f1, f2) -> {
+                int index1 = padre.getChildren().indexOf(f1);
+                int index2 = padre.getChildren().indexOf(f2);
+                return Integer.compare(index2, index1); // decrescente/crescente
+            });
+
+
+            for (FormaPersonalizzabile forma : formeDelGruppo) {
+                CommandInterface comando = new ComandoSpostaIndietroSingolo(receiver, padre, forma);
+                if (comando.execute()) {
+                    listaComandi.add(comando);
+                }
+            }
         } else {
-            receiver.spostaIndietro(forma);
-            return true;
+            CommandInterface comando = new ComandoSpostaIndietroSingolo(receiver, padre, formaDaSpostare);
+                if (comando.execute()) {
+                    listaComandi.add(comando);
+                }
         }
+        
+        return true;
     }
 
     /**
-     * Annulla lo spostamento riportando la forma alla posizione iniziale nella lista dei nodi.
+     * Annulla lo spostamento riportando ogni forma del gruppo alla sua posizione originale nel Pane.
      */
     @Override
     public void undo() {
-        receiver.spostaPosizioneIniziale(padre, forma, posizioneIniziale);
+        for (int i = listaComandi.size() - 1; i >= 0; i--) {
+            listaComandi.get(i).undo();
+        }
     }
 }

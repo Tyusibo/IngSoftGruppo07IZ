@@ -1,5 +1,6 @@
 package testClassi;
 
+import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 import com.gruppo07iz.geometrika.forme.Linea;
 import com.gruppo07iz.geometrika.forme.Rettangolo;
 
@@ -146,16 +147,6 @@ class TestLinea {
 
         // Controllo che la lunghezza ora sia 100
         assertEquals(100.0, linea.calcolaLunghezza(), 0.0001);
-    }
-
-
-
-    /**
-    * Verifica che venga restituito correttamente il nome della dimensione.
-    */
-    @Test
-    void testOttieniNomeDimensione() {
-       assertEquals("Lunghezza", linea.ottieniNomeDimensione());
     }
 
     /**
@@ -365,15 +356,13 @@ class TestLinea {
      * la lunghezza attuale della linea.
      */
     @Test
-    void testOttieniNomiEValoriDimensioni() {
+    void testOttieniValoriDimensioni() {
         linea.setStartX(1);
         linea.setStartY(1);
         linea.setEndX(4);
         linea.setEndY(5);
-        String nome = linea.ottieniNomeDimensione();
         double valore = linea.ottieniValoreDimensione();
 
-        assertEquals("Lunghezza", nome);
         assertEquals(linea.calcolaLunghezza(), valore, 0.0001);
     }
 
@@ -406,7 +395,7 @@ class TestLinea {
     */
     @Test
     public void testClonaForma() {
-        Shape clonato = linea.clonaForma();
+        Shape clonato = (Shape)linea.clonaForma();
 
         assertTrue(clonato instanceof Linea);
         Linea lineaClone = (Linea) clonato;

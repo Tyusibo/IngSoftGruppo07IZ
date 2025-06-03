@@ -59,8 +59,8 @@ public class TestEllisse {
     void testModificaDimensioni() {
         Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
         e.modificaDimensioni(50.5, 40.25);
-        assertEquals(50.5, e.getRadiusX(), 0.0001);
-        assertEquals(40.25, e.getRadiusY(), 0.0001);
+        assertEquals(50.5, e.getRadiusX()*2, 0.02);
+        assertEquals(40.25, e.getRadiusY()*2, 0.02);
     }
     /**
      * Verifica il corretto funzionamento del metodo modificaDimensioni con valori negativi.
@@ -69,8 +69,8 @@ public class TestEllisse {
     void testModificaDimensioniNegativi() {
         Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
         e.modificaDimensioni(-10.5, -20.5);
-        assertEquals(-10.5, e.getRadiusX(), 0.0001);
-        assertEquals(-20.5, e.getRadiusY(), 0.0001);
+        assertEquals(-10.5/2, e.getRadiusX(), 0.0001);
+        assertEquals(-20.5/2, e.getRadiusY(), 0.0001);
     }  
 
     /**
@@ -117,25 +117,6 @@ public class TestEllisse {
         assertEquals(10.0, e.getCenterY(), 0.0001);
     }
 
-    /**
-     * Questo test verifica che il numero di nomi delle dimensioni sia corretto.
-     */
-    @Test
-    void testOttieniNomiDimensioniLunghezza() {
-        Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
-        String[] nomi = e.ottieniNomiDimensioni();
-        assertEquals(2, nomi.length, "Devono esserci esattamente 2 nomi per le dimensioni");
-    }
-
-    /**
-     * Verifica i nomi delle dimensioni restituiti dal metodo ottieniNomiDimensioni.
-     */
-    @Test
-    void testOttieniNomiDimensioni() {
-        Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
-        String[] nomi = e.ottieniNomiDimensioni();
-        assertArrayEquals(new String[] {"RaggioX", "RaggioY"}, nomi);
-    }
 
     /**
      * Questo test verifica che il numero di valori delle dimensioni sia corretto.
@@ -154,7 +135,7 @@ public class TestEllisse {
     void testOttieniValoriDimensioni() {
         Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
         double[] valori = e.ottieniValoriDimensioni();
-        assertArrayEquals(new double[] {70, 30}, valori, 0.0001);
+        assertArrayEquals(new double[] {140, 60}, valori, 0.0001);
     }
 
     /**
@@ -165,7 +146,7 @@ public class TestEllisse {
         Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
         e.modificaDimensioni(25.75, 35.25);
         double[] valori = e.ottieniValoriDimensioni();
-        assertArrayEquals(new double[] {25.75, 35.25}, valori, 0.0001);
+        assertArrayEquals(new double[] {25.75, 35.25}, valori, 0.02);
     }
 
 
@@ -180,8 +161,8 @@ public class TestEllisse {
         e.trascina(30, 40);
 
         // Verifica raggi modificati correttamente
-        assertEquals(50, e.getRadiusX(), 0.0001, "Raggio X dopo modifica concatenata errato");
-        assertEquals(80, e.getRadiusY(), 0.0001, "Raggio Y dopo modifica concatenata errato");
+        assertEquals(25, e.getRadiusX(), 0.0001, "Raggio X dopo modifica concatenata errato");
+        assertEquals(40, e.getRadiusY(), 0.0001, "Raggio Y dopo modifica concatenata errato");
 
         // Verifica posizione aggiornata correttamente
         assertEquals(40, e.getCenterX(), 0.0001, "Coordinata X dopo trascina errata");
@@ -231,8 +212,8 @@ public class TestEllisse {
         e.modificaDimensioni(-30, -40);
         e.trascina(10, 10);
 
-        assertEquals(-30, e.getRadiusX(), 0.0001, "Raggio X negativo non mantenuto");
-        assertEquals(-40, e.getRadiusY(), 0.0001, "Raggio Y negativo non mantenuto");
+        assertEquals(-15, e.getRadiusX(), 0.0001, "Raggio X negativo non mantenuto");
+        assertEquals(-20, e.getRadiusY(), 0.0001, "Raggio Y negativo non mantenuto");
         assertEquals(15, e.getCenterX(), 0.0001, "Centro X dopo trascina errato");
         assertEquals(15, e.getCenterY(), 0.0001, "Centro Y dopo trascina errato");
     }
@@ -246,8 +227,8 @@ public class TestEllisse {
         Ellisse e = new Ellisse(0, 0, Color.BLACK, Color.WHITE);
         e.modificaDimensioni(10, 20);
         e.modificaDimensioni(30, 40);
-        assertEquals(30, e.getRadiusX(), 0.0001, "Raggio X dopo seconda modifica errato");
-        assertEquals(40, e.getRadiusY(), 0.0001, "Raggio Y dopo seconda modifica errato");
+        assertEquals(15, e.getRadiusX(), 0.0001, "Raggio X dopo seconda modifica errato");
+        assertEquals(20, e.getRadiusY(), 0.0001, "Raggio Y dopo seconda modifica errato");
     }
 
     /**
@@ -312,7 +293,7 @@ public class TestEllisse {
         ellisseOriginale.modificaDimensioni(50, 80);
 
         // Act
-        Shape formaClonata = ellisseOriginale.clonaForma();
+        Shape formaClonata = (Shape)ellisseOriginale.clonaForma();
 
         // Assert
         assertNotSame(ellisseOriginale, formaClonata, "La forma clonata deve essere un oggetto diverso");

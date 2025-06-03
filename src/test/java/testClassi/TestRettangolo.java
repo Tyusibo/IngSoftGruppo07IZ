@@ -44,8 +44,8 @@ class TestRettangolo {
     void testModificaDimensioni() {
         // Modifica con valori normali
         rettangolo.modificaDimensioni(80, 120);
-        assertEquals(80, rettangolo.getHeight(), "Altezza dopo modifica errata");
-        assertEquals(120, rettangolo.getWidth(), "Larghezza dopo modifica errata");
+        assertEquals(120, rettangolo.getHeight(), "Altezza dopo modifica errata");
+        assertEquals(80, rettangolo.getWidth(), "Larghezza dopo modifica errata");
 
         // Modifica con zero (controlla comportamento)
         rettangolo.modificaDimensioni(0, 0);
@@ -54,8 +54,8 @@ class TestRettangolo {
 
         // Modifica con valori molto grandi
         rettangolo.modificaDimensioni(10000, 5000);
-        assertEquals(10000, rettangolo.getHeight(), "Altezza grande errata");
-        assertEquals(5000, rettangolo.getWidth(), "Larghezza grande errata");
+        assertEquals(10000, rettangolo.getWidth(), "Larghezza grande errata");
+        assertEquals(5000, rettangolo.getHeight(), "Altezza grande errata");
     }
 
     /**
@@ -86,24 +86,6 @@ class TestRettangolo {
     }
 
     /**
-     * Questo test verifica che il numero di nomi delle dimensioni sia corretto.
-     */
-    @Test
-    void testOttieniNomiDimensioniLunghezza() {
-        String[] nomi = rettangolo.ottieniNomiDimensioni();
-        assertEquals(2, nomi.length, "Devono esserci esattamente 2 nomi per le dimensioni");
-    }
-
-    /**
-     * Testa che i nomi delle dimensioni restituiti siano corretti.
-     */
-    @Test
-    void testOttieniNomiDimensioni() {
-        String[] nomi = rettangolo.ottieniNomiDimensioni();
-        assertArrayEquals(new String[] { "Altezza", "Larghezza" }, nomi, "Nomi dimensioni errati");
-    }
-
-    /**
      * Questo test verifica che il numero di valori delle dimensioni sia corretto.
      */
     @Test
@@ -118,8 +100,8 @@ class TestRettangolo {
     @Test
     void testOttieniValoriDimensioni() {
         double[] valori = rettangolo.ottieniValoriDimensioni();
-        assertEquals(60.0, valori[0], 0.0001, "Valore altezza errato");
-        assertEquals(100.0, valori[1], 0.0001, "Valore larghezza errato");
+        assertEquals(100, valori[0], 0.0001, "Valore altezza errato");
+        assertEquals(60, valori[1], 0.0001, "Valore larghezza errato");
     }
 
 
@@ -136,8 +118,8 @@ class TestRettangolo {
         rettangolo.trascina(50, 50);
 
         // Controllo dimensioni modificate
-        assertEquals(200, rettangolo.getHeight(), "Altezza dopo modifica concatenata errata");
-        assertEquals(300, rettangolo.getWidth(), "Larghezza dopo modifica concatenata errata");
+        assertEquals(300, rettangolo.getHeight(), "Altezza dopo modifica concatenata errata");
+        assertEquals(200, rettangolo.getWidth(), "Larghezza dopo modifica concatenata errata");
 
         // Controllo posizione modificata
         assertEquals(60, rettangolo.getX(), "Coordinata X dopo trascina errata"); // 10 + 50
@@ -197,8 +179,8 @@ class TestRettangolo {
     void testModificaDimensioniRipetuta() {
         rettangolo.modificaDimensioni(10, 20);
         rettangolo.modificaDimensioni(30, 40);
-        assertEquals(30, rettangolo.getHeight(), 0.0001, "Altezza dopo seconda modifica errata");
-        assertEquals(40, rettangolo.getWidth(), 0.0001, "Larghezza dopo seconda modifica errata");
+        assertEquals(40, rettangolo.getHeight(), 0.0001, "Altezza dopo seconda modifica errata");
+        assertEquals(30, rettangolo.getWidth(), 0.0001, "Larghezza dopo seconda modifica errata");
     }
 
 
@@ -263,7 +245,7 @@ class TestRettangolo {
         rettangolo.setRotate(45);
 
         // Clona il rettangolo
-        Shape clone = rettangolo.clonaForma();
+        Shape clone = (Shape)rettangolo.clonaForma();
 
         // Verifica che il clone sia un Rettangolo
         assertTrue(clone instanceof Rettangolo);

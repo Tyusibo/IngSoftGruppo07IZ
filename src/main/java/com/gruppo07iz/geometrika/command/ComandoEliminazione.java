@@ -1,52 +1,79 @@
 package com.gruppo07iz.geometrika.command;
 
 import com.gruppo07iz.geometrika.Model;
+import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
+import com.gruppo07iz.geometrika.forme.Gruppo;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Shape;
+
 
 public class ComandoEliminazione implements CommandInterface{
     private final Model receiver;
-    private final Pane padre;             
-    private final Shape formaDaEliminare;
-    
+    private final Pane padre;
+    private final FormaPersonalizzabile formaDaElminare;
+
+    // Essenziale per l'undo
+    private final List<CommandInterface> listaComandi;
+
     /**
-     * Costruisce un comando di eliminazione per una forma specifica.
+     * Costruttore del comando.
      * 
-     * @param receiver Il modello che gestisce la logica dell'applicazione.
-     * @param padre Il contenitore grafico (pane) da cui eliminare la forma.
-     * @param formaDaEliminare La forma da eliminare.
+     * @param receiver Il modello dell'applicazione.
+     * @param gruppo Il gruppo di forme da spostare in avanti.
+     * @param padre Il contenitore grafico (Pane) su cui si trovano le forme.
      */
-    public ComandoEliminazione(Model receiver, Pane padre, Shape formaDaEliminare) {
+    public ComandoEliminazione(Model receiver, Pane padre, FormaPersonalizzabile formaDaElminare) {
         this.receiver = receiver;
-        this.padre = padre;
-        this.formaDaEliminare = formaDaEliminare;
+        this.formaDaElminare = formaDaElminare;
+        this.padre = padre; 
+        
+        this.listaComandi = new ArrayList<>();
     }
 
     /**
-     * Esegue il comando eliminando la forma dal contenitore.
+     * Esegue lo spostamento avanti di ogni forma del gruppo, se non è già in primo piano.
      * 
-     * @return true se l'operazione è stata eseguita con successo.
+     * @return true se almeno una forma è stata spostata; false se tutte erano già in primo piano.
      */
     @Override
     public boolean execute() {
-        if (this.formaDaEliminare == null || this.padre == null) {
-            throw new IllegalArgumentException("Forma da eliminare o contenitore non possono essere nulli.");
-        }
+        if(formaDaElminare instanceof Gruppo){
+            Gruppo gruppo = (Gruppo) formaDaElminare;
+            
+            // Ottieni il vettore delle forme, ci dovrebbero essere tutte le singole le forme (senza gruppi)
+            List<FormaPersonalizzabile> formeDelGruppo = ((Gruppo) gruppo).getTutteLeForme();
 
-        if (!padre.getChildren().contains(formaDaEliminare)) {
-            throw new IllegalArgumentException("La forma da eliminare non è presente nel contenitore.");
-        }
+            // Ordina le forme in base all'indice nel parent, in ordine decrescente
+            formeDelGruppo.sort((f1, f2) -> {
+                int index1 = padre.getChildren().indexOf(f1);
+                int index2 = padre.getChildren().indexOf(f2);
+                return Integer.compare(index1, index2); // decrescente/crescente
+            });
 
-        this.receiver.eliminaForma(padre, formaDaEliminare);
+
+            for (FormaPersonalizzabile forma : formeDelGruppo) {
+                CommandInterface comando = new ComandoEliminazioneSingolo(receiver, padre, forma);
+                if (comando.execute()) {
+                    listaComandi.add(comando);
+                }
+            }
+        } else {
+            CommandInterface comando = new ComandoEliminazioneSingolo(receiver, padre, formaDaElminare);
+                if (comando.execute()) {
+                    listaComandi.add(comando);
+                }
+        }
         return true;
     }
 
     /**
-     * Annulla il comando aggiungendo nuovamente la forma al contenitore.
+     * Annulla lo spostamento riportando ogni forma del gruppo alla sua posizione originale nel Pane.
      */
     @Override
     public void undo() {
-        this.receiver.aggiungiForma(padre, formaDaEliminare);
+        for (int i = listaComandi.size() - 1; i >= 0; i--) {
+            listaComandi.get(i).undo();
+        }
     }
-    
 }

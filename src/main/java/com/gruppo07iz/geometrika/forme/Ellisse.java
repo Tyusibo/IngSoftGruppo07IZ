@@ -1,84 +1,152 @@
 package com.gruppo07iz.geometrika.forme;
 
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Shape;
 
 /**
  * Classe Ellisse Personalizzato, estende Ellipse e implementa le funzionalità aggiuntive
- * delle interfacce FormaBidimensionale e FormaPersonalizzata
- * La classe non può essere estesa
+ * delle interfacce FormaBidimensionale e FormaPersonalizzata.
+ * La classe non può essere estesa.
  */
-public final class Ellisse extends Ellipse implements FormaBidimensionale{
-    
+public final class Ellisse extends Ellipse implements FormaBidimensionale {
     /**
-    * Il costruttore vuole come parametri le coordinate del punto
-    * e i colori per il riempimento e per il bordo
-    * L'ellisse viene creato con valori dei due raggi di default
-    * @param coordinataX
-    * @param coordinataY
-    * @param coloreBordo
-    * @param coloreRiempimento
-    */
-    public Ellisse(double coordinataX, double coordinataY, Color coloreBordo, Color coloreRiempiemento){
+     * Costruttore che crea un'ellisse nelle coordinate specificate con colori personalizzati.
+     * L'ellisse viene creato con valori di default per i raggi (70x30).
+     * 
+     * @param coordinataX Coordinata X del centro dell'ellisse
+     * @param coordinataY Coordinata Y del centro dell'ellisse
+     * @param coloreBordo Colore del bordo dell'ellisse
+     * @param coloreRiempimento Colore di riempimento dell'ellisse
+     */
+    public Ellisse(double coordinataX, double coordinataY, Color coloreBordo, Color coloreRiempimento) {
         super(coordinataX, coordinataY, 70, 30);
         this.setStroke(coloreBordo);
-        this.setFill(coloreRiempiemento);
-        this.setStrokeWidth(3); 
-    }
-    
-    /* INIZIO METODI FORMABIDIMENSIONALE */
-
-    /**
-    * Implementazione del metodo per la modifica delle dimensioni
-    * Il primo parametro viene usato per il raggio X e il secondo per il raggio Y
-    * @param dim1
-    * @param dim2
-    */
-    @Override
-    public void modificaDimensioni(double dim1, double dim2) {
-        this.setRadiusX(dim1);
-        this.setRadiusY(dim2);
+        this.setFill(coloreRiempimento);
+        this.setStrokeWidth(3);
     }
 
+    /* INIZIO OVERRIDE DI FORMA PERSONALIZZABILE */
     /**
-    * Implementazione del metodo per la restituzione dei nomi delle dimensioni
-    * Vengono fornite in ordine: raggio X e poi raggio Y
-    * @return un array di stringhe contenente i nomi delle dimensioni: "RaggioX" e "RaggioY"
-    */
+     * Disegna l'ellisse sul pannello specificato aggiungendola come figlio.
+     *
+     * @param lavagna il pannello su cui disegnare l'ellisse
+     */
     @Override
-    public String[] ottieniNomiDimensioni() {
-        return new String[] { "RaggioX", "RaggioY" };
+    public void disegna(Pane lavagna) {
+        lavagna.getChildren().add(this);
     }
-
     /**
-    * Implementazione del metodo per la restituzione dei valori delle dimensioni
-    * Vengono fornite in ordine: raggio X e poi raggio Y
-    * @return un array di double contenente i valori delle due dimensioni
-    */
+     * Disegna l'ellisse sul pannello specificato in una posizione specifica nell'elenco dei figli.
+     *
+     * @param lavagna il pannello su cui disegnare l'ellisse
+     * @param posizione la posizione nell'elenco dei figli in cui inserire l'ellisse
+     */
     @Override
-    public double[] ottieniValoriDimensioni() {
-        return new double[] { this.getRadiusX(), this.getRadiusY() };
+    public void disegna(Pane lavagna, int posizione) {
+        lavagna.getChildren().add(posizione, this);
     }
-    
-    /* FINE METODI FORMABIDIMENSIONALE */
-    
     /**
-    * Implementazione della logica di tracinamento per l'Ellisse
-    * @param dx
-    * @param dy
-    */
+     * Imposta il colore di riempimento dell'ellisse.
+     *
+     * @param coloreRiempimento il colore da utilizzare per il riempimento
+     */
+    @Override
+    public void setColoreRiempimento(Color coloreRiempimento) {
+        this.setFill(coloreRiempimento);
+    }
+    /**
+     * Restituisce il colore di riempimento dell'ellisse.
+     *
+     * @return il colore di riempimento corrente
+     */
+    @Override
+    public Color getColoreRiempimento() {
+        return (Color) this.getFill();
+    }
+    /**
+     * Imposta il colore del bordo dell'ellisse.
+     *
+     * @param coloreBordo il colore da utilizzare per il bordo
+     */
+    @Override
+    public void setColoreBordo(Color coloreBordo) {
+        this.setStroke(coloreBordo);
+    }
+    /**
+     * Restituisce il colore del bordo dell'ellisse.
+     *
+     * @return il colore del bordo corrente
+     */
+    @Override
+    public Color getColoreBordo() {
+        return (Color) this.getStroke();
+    }
+    /**
+     * Rimuove l'ellisse dal pannello specificato.
+     *
+     * @param lavagna il pannello da cui rimuovere l'ellisse
+     */
+    @Override
+    public void eliminaForma(Pane lavagna) {
+        lavagna.getChildren().remove(this);
+    }
+    /**
+     * Sposta l'ellisse di una quantità specificata lungo gli assi X e Y.
+     *
+     * @param dx spostamento lungo l'asse X
+     * @param dy spostamento lungo l'asse Y
+     */
     @Override
     public void trascina(double dx, double dy) {
         this.setCenterX(this.getCenterX() + dx);
         this.setCenterY(this.getCenterY() + dy);
     }
+    /**
+     * Porta l'ellisse in primo piano nella gerarchia grafica.
+     */
+    @Override
+    public void spostaDavanti() {
+        this.toFront();
+    }
+    /**
+     * Porta l'ellisse in secondo piano nella gerarchia grafica.
+     */
+    @Override
+    public void spostaIndietro() {
+        this.toBack();
+    }
+    /**
+     * Ruota l'ellisse dell'angolo specificato (in gradi).
+     *
+     * @param angolo angolo di rotazione da aggiungere
+     */
+    @Override
+    public void setAngolo(double angolo) {
+        this.setRotate(this.getRotate() + angolo);
+    }
+    /**
+     * Restituisce l'angolo di rotazione corrente dell'ellisse (in gradi).
+     *
+     * @return l'angolo di rotazione corrente
+     */
+    @Override
+    public double getAngolo() {
+        return this.getRotate();
+    }
+
+    @Override
+    public void setSpecchiaturaOrizzontale() {}
+
+    @Override
+    public void setSpecchiaturaVerticale() {}
     
     /**
-     * Modifica le coordinate del centro dell'ellisse.
+     * Imposta nuove coordinate per il centro dell'ellisse.
      *
-     * @param coordinataX la nuova coordinata X (ascissa) del centro dell'ellisse
-     * @param coordinataY la nuova coordinata Y (ordinata) del centro dell'ellisse
+     * @param coordinataX nuova coordinata X (ascissa) del centro
+     * @param coordinataY nuova coordinata Y (ordinata) del centro
      */
     @Override
     public void cambiaCoordinate(double coordinataX, double coordinataY) {
@@ -86,10 +154,10 @@ public final class Ellisse extends Ellipse implements FormaBidimensionale{
         this.setCenterY(coordinataY);
     }
 
-     /**
+    /**
      * Restituisce le coordinate del centro dell'ellisse.
      *
-     * @return un array double[] contenente [centerX, centerY]
+     * @return un array con le coordinate [centerX, centerY]
      */
     @Override
     public double[] ottieniCoordinate() {
@@ -97,42 +165,75 @@ public final class Ellisse extends Ellipse implements FormaBidimensionale{
     }
 
     /**
-     * Restituisce una rappresentazione testuale dell'ellisse con le seguenti informazioni:
-     * - tipo di forma ("ELLISSE")
-     * - coordinate del centro (centerX, centerY)
-     * - colore del bordo (stroke)
-     * - colore di riempimento (fill)
-     * - raggio verticale (radiusY)
-     * - raggio orizzontale (radiusX)
-     * - angolo di rotazione (rotate)
-     * La stringa termina con un carattere di nuova linea.
+     * Calcola e restituisce il centro geometrico dell'ellisse.
      *
-     * @return una stringa descrittiva dell'ellisse
+     * @return un array con le coordinate del centro [centerX, centerY]
+     */
+    @Override
+    public double[] calcolaCentro() {
+        return new double[] { this.getCenterX(), this.getCenterY() };
+    }
+    /**
+     * Restituisce una rappresentazione testuale dell'ellisse con le sue proprietà.
+     *
+     * @return stringa contenente il tipo di forma, posizione, colori, dimensioni e rotazione
      */
     @Override
     public String toText() {
+        double[] dimensioni = this.ottieniValoriDimensioni(); 
         return "ELLISSE" + " " + this.getCenterX() + " " + this.getCenterY() + " " +
-                this.getStroke() + " " + this.getFill() + " " + 
-                this.getRadiusY() + " " + this.getRadiusX() + " " + this.getRotate() + "\n";
+               this.getStroke() + " " + this.getFill() + " " + 
+               dimensioni[0] + " " + dimensioni[1] + " " + this.getRotate() + "\n";
     }
-    
     /**
-    * Il metodo restituisce un oggetto identico all'Ellisse su cui è stato chiamato
-    */
+     * Crea e restituisce una copia profonda dell'ellisse corrente.
+     *
+     * @return un nuovo oggetto Ellisse identico a questo
+     */
     @Override
-    public Shape clonaForma() {
+    public FormaPersonalizzabile clonaForma() {
         Ellisse copia = new Ellisse(this.getCenterX(), this.getCenterY(), 
-                                (Color) this.getStroke(), (Color) this.getFill());
-        copia.modificaDimensioni(this.getRadiusX(), this.getRadiusY());
+                                 (Color) this.getStroke(), (Color) this.getFill());
+        
+        copia.setRotate(this.getRotate());
+          
+        double dimensioni[] = this.ottieniValoriDimensioni();
+        copia.modificaDimensioni(dimensioni[0], dimensioni[1]);
+
         return copia;
     }
-
+    /**
+     * Applica un effetto grafico all'ellisse.
+     *
+     * @param effetto l'effetto da applicare (ad esempio DropShadow)
+     */
     @Override
-    public double[] calcolaCentro(){
-    double[] centro = new double[2];
-    centro[0] = this.getCenterX();  
-    centro[1] = this.getCenterY();
-    return centro;
+    public void applicaEffetto(DropShadow effetto) {
+        this.setEffect(effetto);
     }
+    
+    /* INIZIO OVERRIDE DI FORMA BIDIMENSIONALE */
+    /**
+     * Modifica le dimensioni dell'ellisse impostando i raggi orizzontale e verticale.
+     *
+     * @param dim1 diametro orizzontale (raggio X * 2)
+     * @param dim2 diametro verticale (raggio Y * 2)
+     */
+    @Override
+    public void modificaDimensioni(double dim1, double dim2) {
+        this.setRadiusX(Math.round((dim1/2) * 100.0)/100.0);
+        this.setRadiusY(Math.round((dim2/2) * 100.0)/100.0);
+    }
+    /**
+     * Restituisce i valori delle dimensioni dell'ellisse (diametro orizzontale e verticale).
+     *
+     * @return array contenente [diametro orizzontale, diametro verticale]
+     */
+    @Override
+    public double[] ottieniValoriDimensioni() {
+        double dim1 = (Math.round((this.getRadiusX()*2) * 100.0)/100.0);
+        double dim2 = (Math.round((this.getRadiusY()*2) * 100.0)/100.0);
 
+        return new double[] { dim1, dim2}; 
+    }
 }

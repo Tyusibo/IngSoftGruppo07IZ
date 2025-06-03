@@ -1,66 +1,77 @@
 package com.gruppo07iz.geometrika.command;
 
 import com.gruppo07iz.geometrika.Model;
+import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
+import com.gruppo07iz.geometrika.forme.Gruppo;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
 
-public class ComandoModificaColoreRiempimento implements CommandInterface {
-
+public class ComandoModificaColoreRiempimento implements CommandInterface{
     private final Model receiver;
-    private final Shape forma;
     private final Color coloreRiempimento;
+    private FormaPersonalizzabile formaDaModificare;
+    
     // Essenziale per l'undo
-    private final Color coloreRiempimentoVecchio;
-    
+    private final List<CommandInterface> listaComandi;
 
     /**
-     * Costruisce il comando salvando il colore di riempimento vecchio e quello nuovo.
+     * Costruisce il comando per modificare il colore del bordo di tutte le forme nel gruppo.
      *
-     * @param receiver Il modello che esegue la modifica.
-     * @param forma La forma da modificare.
-     * @param coloreRiempimento Il nuovo colore di riempimento.
+     * @param receiver Il modello che gestisce la modifica.
+     * @param coloreBordo Il nuovo colore da applicare al bordo.
+     * @param gruppo Il gruppo di forme da modificare.
      */
-    public ComandoModificaColoreRiempimento(Model receiver, Shape forma, Color coloreRiempimento) {
+    public ComandoModificaColoreRiempimento(Model receiver, FormaPersonalizzabile formaDaModificare, Color coloreRiempimento ) {
+
         this.receiver = receiver;
-        this.forma = forma;
         this.coloreRiempimento = coloreRiempimento;
+        this.formaDaModificare=formaDaModificare;
         
-        this.coloreRiempimentoVecchio = (Color) forma.getFill();
+         this.listaComandi = new ArrayList<>();
     }
     
+ 
     /**
-     * Restituisce il colore di riempimento precedente alla modifica.
-     * 
-     * @return Il colore di riempimento vecchio.
-     */
-    public Color getColoreRiempimentoVecchio(){
-        return this.coloreRiempimentoVecchio;
-    }
-
-    /**
-     * Esegue la modifica solo se il nuovo colore è diverso da quello vecchio.
+     * Applica il nuovo colore di bordo a tutte le forme nel gruppo, salvando i colori originali.
      *
-     * @return true se la modifica è stata effettuata, false altrimenti.
+     * @return {@code true} se la modifica è stata eseguita correttamente.
      */
-    public Color getColoreRiempimento(){
-        return this.coloreRiempimento;
-    }
-    
     @Override
     public boolean execute() {
-        // Solo se il nuovo colore è cambiato eseguo la modifica
-        if(coloreRiempimento == coloreRiempimentoVecchio){ return false; }
-        receiver.modificaColoreRiempimento(forma, coloreRiempimento);
-        return true;  
+        if(formaDaModificare instanceof Gruppo){
+            Gruppo gruppo = (Gruppo) formaDaModificare;
+            
+            // Ottieni il vettore delle forme, ci dovrebbero essere tutte le singole le forme (senza gruppi)
+            List<FormaPersonalizzabile> formeDelGruppo = ((Gruppo) gruppo).getTutteLeForme();
+
+
+            for (FormaPersonalizzabile forma : formeDelGruppo) {
+                CommandInterface comando = new ComandoModificaColoreRiempimentoSingolo(receiver, forma, coloreRiempimento);
+                if (comando.execute()) {
+                    listaComandi.add(comando);
+                }
+            }
+        } else {
+            CommandInterface comando = new ComandoModificaColoreRiempimentoSingolo(receiver, formaDaModificare, coloreRiempimento);
+                if (comando.execute()) {
+                    listaComandi.add(comando);
+                }
+        }
+        
+        return true;
     }
 
     /**
-     * Annulla la modifica ripristinando il colore di riempimento precedente.
+     * Annulla la modifica, ripristinando il colore originale del bordo per ciascuna forma.
      */
     @Override
     public void undo() {
-        receiver.modificaColoreRiempimento(forma, coloreRiempimentoVecchio);
+        for (int i = listaComandi.size() - 1; i >= 0; i--) {
+            listaComandi.get(i).undo();
+        }
     }
-    
 }
+
+

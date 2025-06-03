@@ -10,7 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Shape;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
 
 public class StateSelezioneFigura implements StateInterface{
 
@@ -22,7 +23,6 @@ public class StateSelezioneFigura implements StateInterface{
     private double startX, startY;
     // Per eseguire il comando di trascinamento
     private CommandInterface comandoTrascinamento;
-
     /**
      * Costruttore dello stato di selezione figura.
      *
@@ -56,8 +56,8 @@ public class StateSelezioneFigura implements StateInterface{
         context.setCoordinateIncolla(coordinateLocali.getX(), coordinateLocali.getY());
         
         // Se il click destro è stato effettuato su una forma
-        if (event.getTarget() instanceof Shape) {
-            Shape forma = (Shape) event.getTarget();
+        if (event.getTarget() instanceof FormaPersonalizzabile) {
+            FormaPersonalizzabile forma = (FormaPersonalizzabile) event.getTarget();
             context.setFormaSelezionata(forma);
             
             context.abilitaBottoniContextMenu(false);
@@ -81,13 +81,13 @@ public class StateSelezioneFigura implements StateInterface{
     public void clickSinistro(MouseEvent event) {
         
         // Se ho cliccato una forma con il tasto sinistro si deve avviare il trascinamento
-        if (event.getTarget() instanceof Shape) {
-            Shape forma = (Shape) event.getTarget();
+        if (event.getTarget() instanceof FormaPersonalizzabile) {
             this.startX = event.getSceneX();
             this.startY = event.getSceneY();
-
-            this.comandoTrascinamento = new ComandoTrascina(this.modello, (FormaPersonalizzabile) forma);
-        }
+            FormaPersonalizzabile formaSelezionata = (FormaPersonalizzabile) event.getTarget();
+            FormaPersonalizzabile gruppo = context.ottieniGruppoPiuEsterno(formaSelezionata);
+            this.comandoTrascinamento = new ComandoTrascina(this.modello, (FormaPersonalizzabile) gruppo);
+            }
     }
 
    
@@ -108,15 +108,18 @@ public class StateSelezioneFigura implements StateInterface{
             double dx = event.getSceneX() - startX;
             double dy = event.getSceneY() - startY;
 
+            double[] fattoriScala = getZoomDaPane();
+            dx /= fattoriScala[0];
+            dy /= fattoriScala[1];
+
             ((ComandoTrascina) comandoTrascinamento).aggiorna(dx, dy);
-            
-            // Non sarà salvato nella pilaComandi perchè restituisce False
             context.eseguiComando(comandoTrascinamento);
             
-            // Mantengo le coordinate con cui calcolare l'offset aggiornate
             startX = event.getSceneX();
             startY = event.getSceneY();
+
         }
+
     }
 
     /**
@@ -129,9 +132,8 @@ public class StateSelezioneFigura implements StateInterface{
     public void mouseRilasciato(MouseEvent event) {
 
         // Se ho rilasciato con il click sinistro ho terminato un trascinamento
-        if (event.getTarget() instanceof Shape) {
+        if (event.getTarget() instanceof FormaPersonalizzabile) {
             context.aggiungiComandoNellaPila(comandoTrascinamento);
-            
             this.comandoTrascinamento = null;
             this.startX = this.startY = 0;
         }
@@ -147,12 +149,39 @@ public class StateSelezioneFigura implements StateInterface{
     public void movimentoMouse(MouseEvent event) {
         // Se il target è una forma allora metto la manina
         if (event.getTarget() instanceof FormaPersonalizzabile) {
-            Node nodo = (Node) event.getTarget();
-            nodo.setCursor(javafx.scene.Cursor.HAND);
+            lavagna.setCursor(javafx.scene.Cursor.HAND);
             // Altrimenti
         } else {
             lavagna.setCursor(javafx.scene.Cursor.DEFAULT);
         }
+    }
+    
+    /**
+     * Recupera i fattori di scala (zoom) applicati al pannello {@code lavagna}
+     * analizzando tutte le trasformazioni {@code Scale} presenti nella lista dei transform.
+     * <p>
+     * Se sono presenti più trasformazioni di scala, i fattori vengono moltiplicati per ottenere
+     * il fattore di zoom complessivo lungo gli assi X e Y.
+     *
+     * @return un array di {@code double} contenente due valori:
+     *         <ul>
+     *             <li>l'indice 0 rappresenta il fattore di scala orizzontale (X)</li>
+     *             <li>l'indice 1 rappresenta il fattore di scala verticale (Y)</li>
+     *         </ul>
+     */
+    private double[] getZoomDaPane() {
+        double scaleX = 1.0;
+        double scaleY = 1.0;
+
+        for (Transform t : this.lavagna.getTransforms()) {
+            if (t instanceof Scale) {
+                Scale s = (Scale) t;
+                scaleX *= s.getX();
+                scaleY *= s.getY();
+            }
+        }
+
+            return new double[] { scaleX, scaleY };
     }
     
 }

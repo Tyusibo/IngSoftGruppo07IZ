@@ -14,10 +14,10 @@ public class ComandoModificaDimensione implements CommandInterface {
     
 
     /**
-     * Costruisce il comando salvando la dimensione vecchia e la nuova.
-     * 
-     * @param receiver Il modello che esegue le modifiche.
-     * @param forma La forma monodimensionale da modificare.
+     * Costruisce un comando per modificare la dimensione di una forma monodimensionale.
+     *
+     * @param receiver Il modello responsabile dell'applicazione della modifica.
+     * @param forma La forma da modificare.
      * @param dimensione La nuova dimensione da applicare.
      */
     public ComandoModificaDimensione(Model receiver, FormaMonodimensionale forma, double dimensione) {
@@ -29,23 +29,28 @@ public class ComandoModificaDimensione implements CommandInterface {
     }
     
     /**
-     * Restituisce la dimensione vecchia.
-     * 
-     * @return La dimensione precedente alla modifica.
+     * Restituisce la dimensione precedente alla modifica.
+     *
+     * @return La dimensione originale.
      */
     public double getDimensioneVecchia(){
         return this.dimensioneVecchia;
     }
 
     /**
-     * Esegue la modifica della dimensione solo se la nuova è differente dalla vecchia.
-     * 
-     * @return true se la modifica è stata effettuata, false altrimenti.
+     * Restituisce la nuova dimensione da applicare alla forma.
+     *
+     * @return La nuova dimensione.
      */
     public double getDimensione(){
         return this.dimensione;
     }
     
+    /**
+     * Esegue la modifica della dimensione, solo se è diversa da quella originale.
+     *
+     * @return {@code true} se la modifica è stata eseguita, {@code false} se non necessaria.
+     */
     @Override
     public boolean execute() {
         // Solo se la nuova dimensione è cambiata eseguo la modifica
@@ -55,7 +60,7 @@ public class ComandoModificaDimensione implements CommandInterface {
     }
 
     /**
-     * Annulla la modifica ripristinando la dimensione vecchia.
+     * Annulla la modifica ripristinando la dimensione originale della forma.
      */
     @Override
     public void undo() {

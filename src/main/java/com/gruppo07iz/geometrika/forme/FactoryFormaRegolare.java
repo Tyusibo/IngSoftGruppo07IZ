@@ -1,9 +1,8 @@
 package com.gruppo07iz.geometrika.forme;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
-public class Factory {
+public class FactoryFormaRegolare {
     /**
     * Crea e restituisce un'istanza di {@link Shape} in base al tipo specificato.
     * I parametri {@code x} e {@code y} rappresentano le dimensioni della forma, 
@@ -18,8 +17,8 @@ public class Factory {
     * @return un oggetto {@code Shape} corrispondente al tipo specificato
     * @throws IllegalArgumentException se il tipo di forma non è supportato
     */
-    public Shape creaForma(TipoFormaRegolare tipo, double x, double y, Color bordo, Color riemp) {
-        Shape forma;
+    public FormaPersonalizzabile creaFormaRegolare(TipoFormaRegolare tipo, double x, double y, Color bordo, Color riemp) {
+        FormaPersonalizzabile forma;
         switch (tipo) {
             case ELLISSE:
                 forma = new Ellisse(x, y, bordo, riemp);

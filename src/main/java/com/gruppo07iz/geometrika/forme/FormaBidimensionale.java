@@ -1,22 +1,26 @@
 package com.gruppo07iz.geometrika.forme;
 
 /**
- * Questa interfaccia serve per dichiarare firme di metodi comuni a tutte le forme a 2 dimensioni.
+ * Interfaccia che definisce i metodi specifici per le forme geometriche bidimensionali.
+ * Estende l'interfaccia FormaPersonalizzabile aggiungendo funzionalità per gestire
+ * le due dimensioni caratteristiche di queste forme.
  */
-public interface FormaBidimensionale extends FormaPersonalizzabile{
+public interface FormaBidimensionale extends FormaPersonalizzabile {
+    
     /**
-    * Questa metodo va implementato permettendo di modificare le singole dimensioni
-    * in accordo a come è strutturata la specifica forma bidimensionale
-    */
-    public void modificaDimensioni(double dim1, double dim2); 
+     * Modifica le dimensioni caratteristiche della forma bidimensionale.
+     * 
+     * @param dim1 La nuova valore per la prima dimensione 
+     * @param dim2 La nuova valore per la seconda dimensione 
+     */
+    void modificaDimensioni(double dim1, double dim2); 
+
     /**
-    * Questa metodo va implementato permettendo di restituire le singole dimensioni
-    * in accordo a come è strutturata la specifica forma bidimensionale
-    */
-    public String[] ottieniNomiDimensioni();
-    /**
-    * Questa metodo va implementato permettendo di restituire i nominativi delle singole dimensioni
-    * in accordo a come è strutturata la specifica forma bidimensionale
-    */
-    public double[] ottieniValoriDimensioni();
+     * Restituisce i valori correnti delle dimensioni caratteristiche della forma.
+     * 
+     * @return Un array di double contenente i valori delle dimensioni,
+     *         dove il primo elemento corrisponde alla prima dimensione
+     *         e il secondo elemento alla seconda dimensione
+     */
+    double[] ottieniValoriDimensioni();
 }

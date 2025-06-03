@@ -1,13 +1,13 @@
 package com.gruppo07iz.geometrika.command;
 
 import com.gruppo07iz.geometrika.Model;
+import com.gruppo07iz.geometrika.forme.FormaPersonalizzabile;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Shape;
 
 public class ComandoIncolla implements CommandInterface{
     private final Model receiver;
     private final Pane lavagna;
-    private final Shape formaCopiata;
+    private final FormaPersonalizzabile formaCopiata;
     private final double coordinataX;
     private final double coordinataY;
 
@@ -20,7 +20,7 @@ public class ComandoIncolla implements CommandInterface{
      * @param coordinataX La coordinata X in cui incollare la forma.
      * @param coordinataY La coordinata Y in cui incollare la forma.
      */
-    public ComandoIncolla(Model receiver, Pane lavagna, Shape formaCopiata, double coordinataX, double coordinataY) {
+    public ComandoIncolla(Model receiver, Pane lavagna, FormaPersonalizzabile formaCopiata, double coordinataX, double coordinataY) {
         this.receiver = receiver;
         this.lavagna = lavagna;
         this.formaCopiata = formaCopiata;
