@@ -566,17 +566,16 @@ public class DashboardController implements Initializable {
         if (!this.pilaComandi.isEmpty()) {
             CommandInterface comando = this.pilaComandi.pop();
             comando.undo();
+            if(lineaBottone != null){ aggiornaStile(bottoneAttualmenteSelezionato); }
+
 
             Platform.runLater(() -> {
                 if (comando instanceof ComandoCreazioneGruppo){
                     this.mostraMessaggioInformativo("Il gruppo creato è stato sciolto."); 
                 }
-                aggiornaStile(null);
 
                 if (comando instanceof ComandoSeparazioneGruppo){
                     this.mostraMessaggioInformativo("Il gruppo sciolto è stato riunito."); 
-                aggiornaStile(null);
-
                 }
                 this.chiudiToggleMenu();
             });
@@ -584,8 +583,6 @@ public class DashboardController implements Initializable {
         } else {
             Platform.runLater(() -> {
                 this.mostraMessaggioInformativo("Non ci sono comandi da annullare.");
-                aggiornaStile(null);
-
                 this.chiudiToggleMenu();
             });
         }
