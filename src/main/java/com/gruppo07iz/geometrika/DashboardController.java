@@ -564,7 +564,6 @@ public class DashboardController implements Initializable {
     @FXML
     public void annullaUltimoComando() {
         if (!this.pilaComandi.isEmpty()) {
-            aggiornaStile(null);
             CommandInterface comando = this.pilaComandi.pop();
             comando.undo();
 
@@ -572,8 +571,12 @@ public class DashboardController implements Initializable {
                 if (comando instanceof ComandoCreazioneGruppo){
                     this.mostraMessaggioInformativo("Il gruppo creato è stato sciolto."); 
                 }
+                aggiornaStile(null);
+
                 if (comando instanceof ComandoSeparazioneGruppo){
                     this.mostraMessaggioInformativo("Il gruppo sciolto è stato riunito."); 
+                aggiornaStile(null);
+
                 }
                 this.chiudiToggleMenu();
             });
@@ -581,6 +584,8 @@ public class DashboardController implements Initializable {
         } else {
             Platform.runLater(() -> {
                 this.mostraMessaggioInformativo("Non ci sono comandi da annullare.");
+                aggiornaStile(null);
+
                 this.chiudiToggleMenu();
             });
         }
@@ -614,7 +619,7 @@ public class DashboardController implements Initializable {
 
         // Disabilito il colore riempimento solo se lo stato è quello della linea
         this.coloreRiempimentoCreazione.setDisable(bottoneSelezionato == this.lineaBottone);
-        
+
         // Cancello gli effetti che si ottengono in seguito a una creazione poligono incompiuta
         this.gestionePuntiPoligono();
 
